@@ -1,0 +1,399 @@
+---
+title: "Chapter 1 - R Programming Fundamentals"
+subtitle: "Things you probably should know before you start to use R"
+author: "Hao Zhu, Thomas Travison"
+date: "4/1/2019"
+output: 
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+---
+
+This chapter below gives you an introduction of using R with RStudio. Unlike many other tutorials, we not only teach you the real "basics" but also give you a deeper explanations on how and why R works in the way it is. Some of the points we discuss here might seem a little abstract at first but they will help you understand the contents in following chapters in a much better way.
+
+# RStudio Interface
+
+![](images/4panel_rstudio.png)
+
+- Top-Left: **Text editor** 
+- Bottom-Left: **R Console**, Terminal
+- Top-Right: **Environment**, History, Database Connections
+- Bottom-right: **File System**, Plots, **R Packages**, **Help**, Viewer
+
+\* _Bolded items are the most important panes we will focus first_
+
+You can customize the layout in Tools -> Global Options -> Pane Layout but for this workshop, please try to stick with the standard one. 
+
+For more details, check out the official RStudio IDE cheatsheet in your package. Otherwise you can download one from the following link.  
+
+[Download RStudio IDE Cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf)
+
+If you are using our RStudio Server at Marcus Institute, you can check out the [server guide we provided](https://ifar-connect.hsl.harvard.edu/using_rstudio_server).
+
+#### Text editor & R Console
+We use **R Console** to **execute** R Commands but in most cases, we type R commands in the Editor pane and send those commands to the console to execute. In this way, we can save our code in files. 
+
+- You can hit `Control/Cmd + Enter` to send "this line" or selected codes to console to execute. 
+- To run all, hit `Control/Cmd + A` to select all codes and then hit `Control/Cmd + Enter`.
+
+# Getting Started with R
+Let's get started with a few basic examples before we move to the concept of functions in R, which is the most important concept in this chapter.
+
+1. You can use R to do basic math calculations. 
+```{r}
+(12 + 33)^2 / 100
+```
+
+2. You can assign any values to a "variable" using `<-` or `=`. After you made the assignment, you can use this variable in all the following calculations. 
+```{r}
+x <- 33
+(12 + x)^2 / 100
+```
+
+3. If you have a series of numbers, you can organize them into a `vector` using the function `c()`. The calculation for vector follows the mathematical common sense.  
+```{r}
+x <- c(1, 2, 5, 9)
+x + 1
+```
+
+4. You can see all your defined variables, including your defined functions, in the **Environment** tab the top-right pane. You can also use the `ls()` function to list them out in your R console. If certain variables are not needed anymore, you can remove them from memory with the `rm()` function.
+```{r}
+a <- "Hello"
+ls()
+rm(a)
+ls()
+```
+
+```{r}
+# remove all objects
+rm(list = ls())
+```
+
+So far, we have introduced you 3 functions, namely `c()`, `ls()` & `rm()`. In R, you call a function through its name. In the first example, it's `c`. Then you put all the arguments, in this case, `1, 2, 5, 9`, in a **pair of parentheses**. For functions without any arguments, you still need to put a pair of parenthese after the function name, indicating that you want to **execute** the function instead of checking the internal contents of that function. 
+
+### Help & Source Code
+If you want to learn more about a function, typing `?` + function name will bring up the help page. For example, in this case, `?c`. You can also type the function name in the **Help** tab in the bottom-right pane. You should get the same result. 
+
+If you want to see what exactly this function is doing by reviewing its source code, typing just the function name without the parentheses will print out the content of the function in the console. An alternative way of doing that is to hold `Control/Cmd` and click the function name in the Editor. A new tab will appear with the contents of the function. 
+
+### Create your own function
+It is also not so difficult to write your own function in R. Self-defined functions help modualize your codes and make it easier to read and maintain in the future. 
+
+```{r}
+plusOne <- function(your_number) {
+  out <- your_number + 1
+  return(out)
+}
+plusOne(1)
+```
+
+### R packages 📦
+R packages are collections of user-contributed functions. The official R package repository is CRAN. There are more than 13k packages on CRAN right now. CRAN is running a very strict code quality check on every submitted package. Generally speaking, we think packages on CRAN are "trusted". 
+
+
+# Data Types & Structures in R
+In this section, we use the term "data type" to indicate the type of data, regardless how the data is organized. "Data structure" here means how the data are organized, regardless of their data types. For example, all the elements in set 1, 2, 3, 4, 5 are numeric (data type) and they are organized inside a vector (data structure). 
+
+## Data Types
+### Common Types
+You can find most of the common data type in R. Here is a brief list
+
+- logical: `TRUE`/`FALSE` (or `T`/`F`)
+- integer: `1L` 
+- double (numeric): `1.23`
+- character: `"1.23"`
+...
+
+You can check the data types using the `is.***` functions. 
+
+```{r}
+is.character(1.23)
+is.character("1.23")
+```
+
+You can do type conversion using the `as.***` functions
+```{r}
+x <- as.numeric("1.23")
+class(x)
+```
+
+As you may have noticed, this list is ordered by the degree of generalizability. For your convenience, R will automatically handle some type conversions for using this order. Types with a lower generalizability will be converted to the higher one when two or more data types are used together.
+
+```{r}
+T + 1.2           # T will be treated as 1 while F = 0
+
+c("Hello", 123)   # 123 got converted to character string
+```
+
+### Date & Time
+There are other types of data in R but we won't cover all of them. The only two things we should mention here are date and time.
+
+```{r}
+date_a <- as.Date("2019-01-01")
+date_b <- as.Date("10/jan, 2019", "%d/%b, %Y")
+c(date_a, date_b)
+```
+
+*Read more about date formats in R [here](https://www.statmethods.net/input/dates.html).*
+
+You can perform calculations on these dates. Sometimes it's very useful to convert the final result to numeric for further calculations. 
+```{r}
+date_a + 1
+date_b - date_a
+as.numeric(date_b - date_a)
+```
+
+In fact, you can even turn any dates into a number, which is in fact the number of date since "origin". By default, in most of modern programming languages, we use "1970-01-01" as the origin date (that was about the time computer was invented).
+```{r}
+as.numeric(date_a)
+as.Date(-5000, origin = "1970-01-01")
+```
+
+## Data Structure
+Comparing with other popular programming languages, data structure in R has been simplified a lot. For most data analytical tasks, this is not a weakness. Instead, it's a strength of R and makes it a lot easier to use. For now, all you need to know is the following 3 types: vector, list & data frame.
+
+### Vector & Matrix (array)
+#### Vector (1D array)
+A vector is a series of values **with the same data type**. For example, `c(1, 2, 4, 7)` is a vector and so is `c("a", "c", "s", "z")`. As we discussed before, if you combine two different data types in one vector, all the values will be converted to the data type that has the greatest generalizability (see the example above). 
+
+You can access each element of a vector using the `[]` symbol. 
+```{r}
+x <- c(1, 2, 4, 7)
+x[2] # Pulls out the 2nd element of this vector, which is 2. 
+```
+
+You can check the length of a vector using the `length()` function. This function is one of the few function that will always work in R. We will talk about this more in the future.
+```{r}
+length(x)
+```
+
+You can put length() in [] to get the last element dynamically.
+```{r}
+x[length(x)]
+```
+
+If you have the need to generate a sequence of numbers from 1 to 5. You can simply do that via the `:` symbol. R also has the pre-defined `letters` and `LETTERS` values so you can quickly pull out certain English letters. 
+```{r}
+1:5
+letters[1:5]
+LETTERS[24:26]
+```
+
+Furthermore, you can assign names to a vector and refer each element by its name. Such vectors are called "named vector".
+```{r}
+names(x) <- c("a", "b", "c", "d")
+x["a"]
+```
+
+Same result can be achieved at the step of creating the vector.
+```{r}
+x2 <- c("Apple" = 1, "Banana" = 2, "Pear" = 3)
+x2
+```
+
+#### Matrix & Array (2D/3+D array) (optional)
+From the mathematical point of view, a vector is just a 1-D array with a customized length of *N* (1 x *N*). If we want to extend this concept a little further, for example, to a *m x n* matrix or a *a1 x a2 x a3 x ...* multi-dimensional array, thanks to the statistical background of R, we also have native supports for these mathematical concepts in R. 
+
+**Note that although matrix & array are quite useful for certain mathematical calculations, they are NOT the most common way we deal with data in R. The major restriction of a matrix/array is that, similar with a vector, these formats require all the values inside share the same data type. This brings up a huge inflexibility for real-life data where one column could be numbers while the other could be character strings. That's why in most cases when we use R, we use `data.frame` or `tibble`, which we will talk about later, to store the data. **
+
+The `matrix` function allows you to arrange a vector of values (not limited to numbers) into a matrix as long as you provide the desired number of rows or column via `nrow` or `ncol`.
+```{r}
+m1 <- matrix(1:12, nrow = 2)
+m1
+```
+
+Note that by default, these values are arranged by column. You can change this setting by turnning on the `byrow` option.
+```{r}
+matrix(1:12, nrow = 2, byrow = T)
+```
+
+Similar with vector, you can refer to specific elements of the matrix using the `[]` locator.
+```{r}
+m1[2, 3] # 2nd row, 3rd column
+```
+
+Matrix calculation is also possible, following the mathematical rules. If you need to learn more about these operations, check out this page: https://www.statmethods.net/advstats/matrix.html. 
+```{r}
+# a 2 x 6 matrix multiplies a 6 x 2 matrix, resulted in a 2 x 2 matrix
+matrix(1:12, nrow = 2) %*% matrix(1:12, nrow = 6)
+```
+
+For 3+D arrays, things are quite similar. However here you need to provide the size for each dimension. For both matrix & array, you can check the dimension via the `dim()` command. 
+```{r}
+ar <- array(1:24, dim = c(2, 3, 4))
+dim(ar)
+```
+
+### List
+A list is also a series of values but unlike vector, it does **NOT** have any requirements for its elements. You can mix up numbers, characters, date, functions(!) and even another list together. Similar with vector, you can also give names to elements at the step of creating the list
+
+```{r}
+lst <- list(
+  "item1" = 1:5, 
+  "item2" = "Hello world",
+  "item3" = sum, # Note that we put the name of a function here. 
+  # Since we don't have the parentheses, this function is not executed
+  "item4" = list(1, 2, 3)
+)
+length(lst)
+```
+
+You can refer to each element of the list using the `[[ ]]` symbol. 
+```{r}
+lst[[3]](lst[[1]]) # equivalent to sum(1:5)
+```
+
+You can also call them via the names. Note here we are using this `$` sign, which we will discuss in details in the next section. 
+```{r}
+lst$item3(lst$item1)
+```
+
+Since list can contain everything, it is the most useful but messy tool in R to hold your data. Something we are going to discuss later is to use `base::lapply()` and the `purrr::map()` to manipulate every element of a list. Below is an example of `lapply()`. We will talk about `purrr::map()` later as it's part of the beloved `tidyverse`.
+
+```{r}
+x <- list(
+  1:5,
+  11:15,
+  21:25
+)
+lapply(x, sum)
+```
+
+In the example above, `lapply` applied the function `sum` to every element of a list of 3 vector and return the results as a list of 3 numbers.
+
+### Data Frame & tibble
+As we discussed before, most of the data we are analyzing today are organized in a way that we use "column" to organize the same type of data. For example, the market price for different items & the interview comments from different participants. As a result, the term "data frame" was invented in language S, the language before R, and was re-implemented in R and Python recently through `pandas`. You can find the definition of "data frame" in the help page of `?data.frame` in R, which says,
+
+> A data frame is a list of variables of the same number of rows with unique row names.
+
+This one sentence of definition reveals an important characteristics of data frame: behind the scene, **data frame is a list of vectors with the same length**. The *list* "frame" gives it ability to hold different types of data. The *vector* element makes sure every "row" of the same column belongs to the same type so you can confidently use functions on them. Last but not least, this design makes it easy to write up statistical formulas and use graphical gramma's in R. 
+
+This design brings up some unique characteristics when we analyze data in R. One of these characteristics is that **column-based calculation is way more faster than row_based calculation**. The design of R's data frame is like an apple tree. Column-based calculations are like picking up all the apples on the same branch while row-base calculations are like picking up the 2nd apple on every branch. Obviously, the later method will be slower because you need to go to every branch and look for the nth apple. Therefore, for the same task, using a `for loop` going through every row will be much slower than manipulate the columns directly. 
+
+Okay, enough theories, let's take a look at how data frame actually works in R. You can simply create a data frame using the `data.frame` funciton. Here we are creating a data frame with 2 columns (column1 & column2) and 3 rows. After you assigned the created data frame to the variable `df`, you can refer to the `column1` column using `df$column1`. If you are using RStudio, you will see the auto-complete hints comes up the moment when you type `$`. In R `$` pronounces like `'s` in English.
+
+```{r}
+df <- data.frame(
+  column1 = 1:3,
+  column2 = c("Apple", "Pen", "Pineapple")
+)
+df$column1
+```
+
+Similar with vector and matrix, you can also refer to specific locations of the data frame using the `[ ]` locator.
+```{r}
+df[1, 2] # 1st row, 2nd column
+
+df[1, ] # Entire 1st row
+
+df[-1,] # All rows other than the 1st row
+
+df[, 2] # Entire 2nd column
+```
+
+Basic `data.frame` is great except one thing: if a column is character, it will convert this character string to factor, which is a special data type in R for categorical variables. Together with the popularity of tidyverse, people started to prefer the format `tibble` over the traditional `data.frame`. In addition, the structure of `tibble` can go a little bit more advanced - we can have a column of tibbles in a tibble column. We will discuss these in details in the next chapters. 
+
+`tibble` is available in the very popular `tidyverse` package. You can start to use `tibble` after you load `tidyverse` package. 
+
+```{r, message = F}
+library(tidyverse)
+tibble(
+  A = c(2, 3, 5),
+  B = c("a", "q", "z")
+)
+```
+
+You can also define a tibble horrizonally via `tribble`. In some cases, this is more literal. 
+```{r}
+tribble(
+  ~A, ~B, # column names
+  2, "a",
+  3, "q",
+  5, "z"
+)
+```
+
+# Control Statements
+## if Statement
+### Logical operators
+Common logical operators in R includes == (equal to), != (not equal to), <, >, <= (smaller or equal to), >= (larger or equal to), %in% (within), ! (NOT).
+
+### if Statement
+The syntax for R's if statement looks like below
+```{r, eval = F}
+if (condition) {
+  do something
+}
+
+# or
+
+if (condition) {
+  do something
+} else {
+  do something else
+}
+```
+
+Note that the length of the logical condition has to be 1. In fact, a very common mistake in using the `if` statement on a vector. The example below won't work.
+
+```{r}
+x <- 1:5
+
+if (x == 2) {
+  print("Hi")
+}
+
+# if we check the results of x == 2, we will get a logical vector of 5, which 
+# can't be handled by regular if statement.
+x == 2
+```
+
+For this kind of vectors, consider use the function `ifelse` instead. Unlike `if`, `ifelse` works when the length of conditions is larger than 1. We will talk about this in details in the future. 
+
+```{r}
+ifelse(x != 3, "A", "B")
+```
+
+## for loops
+R's syntax for `for` loop looks like below. 
+```{r}
+x <- c()
+for (i in 1:5) {
+  x[i] <- letters[i]
+}
+x
+```
+
+#### Extended Reading (Read this when you already have some backgrounds in R)
+There is a common misunderstanding that `for` loop in R is quite slow. In fact, this impression was made mostly due to the fact that many people are using `for` loop in the wrong way. First of all, as we discussed above, if you write a for loop looping across rows in a data frame/tibble, obviously your code will be quite slow due to the design of data frame. Second, due to the internal mechanism of R, the performance of a `for` loop can be heavily impacted by the way how people write their code. The details of these are discussed in Hadley's [Advanced R](https://adv-r.hadley.nz/index.html), which is a really good book to read after you use R for a while and you need some advanced knowledge. 
+
+```{r}
+# Bad practice
+# This practice creates a new memory reference in every iteration and 
+# assign the new refernce id to the for_loop_bad variable. The 
+# performance will get slower as the number of iterations increases. 
+system.time({
+  for_loop_bad <- c()
+  for (i in 1:50000) {
+    for_loop_bad <- c(for_loop_bad, i)
+  }
+})
+
+# Good practice
+# This practice modifies elements of the same object for 50000 times. 
+# The performance is almost linear.
+system.time({
+  for_loop_bad <- c()
+  for (i in 1:50000) {
+    for_loop_bad[i] <- i
+  }
+})
+```
+
+
+
+In the end, although we are talking about performance a lot here, in most cases in our life, this is not part of our concerns. Most of the datasets we used at work are just not big enough that we need to worry about performance. If you just started to learn R, you should focus on the contents of Chapter 2 & 3, before spending time on understanding the mechanism behind all these things. 
