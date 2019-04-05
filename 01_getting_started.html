@@ -1648,13 +1648,11 @@ plusOne(1)</code></pre>
 <p>R packages are collections of user-contributed functions. The official R package repository is CRAN. There are more than 13k packages on CRAN right now. CRAN is running a very strict code quality check on every submitted package. Generally speaking, we think packages on CRAN are “trusted”.</p>
 </div>
 </div>
-<div id="data-types-structures-in-r" class="section level1">
-<h1>Data Types &amp; Structures in R</h1>
-<p>In this section, we use the term “data type” to indicate the type of data, regardless how the data is organized. “Data structure” here means how the data are organized, regardless of their data types. For example, all the elements in set 1, 2, 3, 4, 5 are numeric (data type) and they are organized inside a vector (data structure).</p>
-<div id="data-types" class="section level2">
-<h2>Data Types</h2>
-<div id="common-types" class="section level3">
-<h3>Common Types</h3>
+<div id="data-types" class="section level1">
+<h1>Data Types</h1>
+<p>In this section, we use the term “data type” to indicate the type of data, regardless how the data is organized. “Data structure”, which we are going to discuss below, means how the data are organized, regardless of their data types. For example, all the elements in set 1, 2, 3, 4, 5 are numeric (data type) and they are organized inside a vector (data structure).</p>
+<div id="common-types" class="section level2">
+<h2>Common Types</h2>
 <p>You can find most of the common data type in R. Here is a brief list</p>
 <ul>
 <li>logical: <code>TRUE</code>/<code>FALSE</code> (or <code>T</code>/<code>F</code>)</li>
@@ -1677,8 +1675,8 @@ class(x)</code></pre>
 <pre class="r"><code>c(&quot;Hello&quot;, 123)   # 123 got converted to character string</code></pre>
 <pre><code>## [1] &quot;Hello&quot; &quot;123&quot;</code></pre>
 </div>
-<div id="date-time" class="section level3">
-<h3>Date &amp; Time</h3>
+<div id="date-time" class="section level2">
+<h2>Date &amp; Time</h2>
 <p>There are other types of data in R but we won’t cover all of them. The only two things we should mention here are date and time.</p>
 <pre class="r"><code>date_a &lt;- as.Date(&quot;2019-01-01&quot;)
 date_b &lt;- as.Date(&quot;10/jan, 2019&quot;, &quot;%d/%b, %Y&quot;)
@@ -1699,13 +1697,13 @@ c(date_a, date_b)</code></pre>
 <pre><code>## [1] &quot;1956-04-24&quot;</code></pre>
 </div>
 </div>
-<div id="data-structure" class="section level2">
-<h2>Data Structure</h2>
+<div id="data-structure" class="section level1">
+<h1>Data Structure</h1>
 <p>Comparing with other popular programming languages, data structure in R has been simplified a lot. For most data analytical tasks, this is not a weakness. Instead, it’s a strength of R and makes it a lot easier to use. For now, all you need to know is the following 3 types: vector, list &amp; data frame.</p>
-<div id="vector-matrix-array" class="section level3">
-<h3>Vector &amp; Matrix (array)</h3>
-<div id="vector-1d-array" class="section level4">
-<h4>Vector (1D array)</h4>
+<div id="vector-matrix-array" class="section level2">
+<h2>Vector &amp; Matrix (array)</h2>
+<div id="vector-1d-array" class="section level3">
+<h3>Vector (1D array)</h3>
 <p>A vector is a series of values <strong>with the same data type</strong>. For example, <code>c(1, 2, 4, 7)</code> is a vector and so is <code>c(&quot;a&quot;, &quot;c&quot;, &quot;s&quot;, &quot;z&quot;)</code>. As we discussed before, if you combine two different data types in one vector, all the values will be converted to the data type that has the greatest generalizability (see the example above).</p>
 <p>You can access each element of a vector using the <code>[]</code> symbol.</p>
 <pre class="r"><code>x &lt;- c(1, 2, 4, 7)
@@ -1735,8 +1733,8 @@ x2</code></pre>
 <pre><code>##  Apple Banana   Pear 
 ##      1      2      3</code></pre>
 </div>
-<div id="matrix-array-2d3d-array-optional" class="section level4">
-<h4>Matrix &amp; Array (2D/3+D array) (optional)</h4>
+<div id="matrix-array-2d3d-array-optional" class="section level3">
+<h3>Matrix &amp; Array (2D/3+D array) (optional)</h3>
 <p>From the mathematical point of view, a vector is just a 1-D array with a customized length of <em>N</em> (1 x <em>N</em>). If we want to extend this concept a little further, for example, to a <em>m x n</em> matrix or a <em>a1 x a2 x a3 x …</em> multi-dimensional array, thanks to the statistical background of R, we also have native supports for these mathematical concepts in R.</p>
 <p><strong>Note that although matrix &amp; array are quite useful for certain mathematical calculations, they are NOT the most common way we deal with data in R. The major restriction of a matrix/array is that, similar with a vector, these formats require all the values inside share the same data type. This brings up a huge inflexibility for real-life data where one column could be numbers while the other could be character strings. That’s why in most cases when we use R, we use <code>data.frame</code> or <code>tibble</code>, which we will talk about later, to store the data. </strong></p>
 <p>The <code>matrix</code> function allows you to arrange a vector of values (not limited to numbers) into a matrix as long as you provide the desired number of rows or column via <code>nrow</code> or <code>ncol</code>.</p>
@@ -1765,8 +1763,8 @@ dim(ar)</code></pre>
 <pre><code>## [1] 2 3 4</code></pre>
 </div>
 </div>
-<div id="list" class="section level3">
-<h3>List</h3>
+<div id="list" class="section level2">
+<h2>List</h2>
 <p>A list is also a series of values but unlike vector, it does <strong>NOT</strong> have any requirements for its elements. You can mix up numbers, characters, date, functions(!) and even another list together. Similar with vector, you can also give names to elements at the step of creating the list</p>
 <pre class="r"><code>lst &lt;- list(
   &quot;item1&quot; = 1:5, 
@@ -1800,8 +1798,8 @@ lapply(x, sum)</code></pre>
 ## [1] 115</code></pre>
 <p>In the example above, <code>lapply</code> applied the function <code>sum</code> to every element of a list of 3 vector and return the results as a list of 3 numbers.</p>
 </div>
-<div id="data-frame-tibble" class="section level3">
-<h3>Data Frame &amp; tibble</h3>
+<div id="data-frame-tibble" class="section level2">
+<h2>Data Frame &amp; tibble</h2>
 <p>As we discussed before, most of the data we are analyzing today are organized in a way that we use “column” to organize the same type of data. For example, the market price for different items &amp; the interview comments from different participants. As a result, the term “data frame” was invented in language S, the language before R, and was re-implemented in R and Python recently through <code>pandas</code>. You can find the definition of “data frame” in the help page of <code>?data.frame</code> in R, which says,</p>
 <blockquote>
 <p>A data frame is a list of variables of the same number of rows with unique row names.</p>
@@ -1855,7 +1853,6 @@ tibble(
 ## 1     2 a    
 ## 2     3 q    
 ## 3     5 z</code></pre>
-</div>
 </div>
 </div>
 <div id="control-statements" class="section level1">
@@ -1920,7 +1917,7 @@ system.time({
   }
 })</code></pre>
 <pre><code>##    user  system elapsed 
-##   4.362   0.022   4.385</code></pre>
+##   4.373   0.032   4.405</code></pre>
 <pre class="r"><code># Good practice
 # This practice modifies elements of the same object for 50000 times. 
 # The performance is almost linear.
@@ -1935,6 +1932,41 @@ system.time({
 <p>In the end, although we are talking about performance a lot here, in most cases in our life, this is not part of our concerns. Most of the datasets we used at work are just not big enough that we need to worry about performance. If you just started to learn R, you should focus on the contents of Chapter 2 &amp; 3, before spending time on understanding the mechanism behind all these things.</p>
 </div>
 </div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<ul>
+<li>Basics
+<ul>
+<li>RStudio is an IDE while R is the actual software</li>
+<li>Enter code in editor and <code>Control/Cmd + Enter</code> to execute them in console</li>
+<li><code>&lt;-</code> is the assignment symbol in R</li>
+<li>Enter <code>?functionName</code> to find help.</li>
+<li>Functions handle most of the operations in R.</li>
+<li>Use <code>functionName(...)</code> to execute a function.</li>
+<li>Use <code>functionName &lt;- function( arguments ) { Action }</code> to define a function.</li>
+<li>R package is a collection of r functions written by other people.</li>
+</ul></li>
+<li>Data Type
+<ul>
+<li>Logical: <code>T</code>/<code>F</code></li>
+<li>Integer: <code>1L</code></li>
+<li>Double: <code>1.23</code></li>
+<li>Character: <code>&quot;1.23&quot;</code></li>
+<li>Date, Time</li>
+</ul></li>
+<li>Data Structure
+<ul>
+<li>Vector &amp; Matrix</li>
+<li>List</li>
+<li>Data.frame &amp; Tibble</li>
+</ul></li>
+<li>Control Statements
+<ul>
+<li><code>if</code>: <code>if (Condition) { Action 1 } else { Action 2 }</code></li>
+<li><code>for</code>: <code>for (i in values) { Actions}</code></li>
+</ul></li>
+</ul>
 </div>
 
 

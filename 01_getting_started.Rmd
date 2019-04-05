@@ -95,11 +95,10 @@ plusOne(1)
 R packages are collections of user-contributed functions. The official R package repository is CRAN. There are more than 13k packages on CRAN right now. CRAN is running a very strict code quality check on every submitted package. Generally speaking, we think packages on CRAN are "trusted". 
 
 
-# Data Types & Structures in R
-In this section, we use the term "data type" to indicate the type of data, regardless how the data is organized. "Data structure" here means how the data are organized, regardless of their data types. For example, all the elements in set 1, 2, 3, 4, 5 are numeric (data type) and they are organized inside a vector (data structure). 
+# Data Types
+In this section, we use the term "data type" to indicate the type of data, regardless how the data is organized. "Data structure", which we are going to discuss below, means how the data are organized, regardless of their data types. For example, all the elements in set 1, 2, 3, 4, 5 are numeric (data type) and they are organized inside a vector (data structure). 
 
-## Data Types
-### Common Types
+## Common Types
 You can find most of the common data type in R. Here is a brief list
 
 - logical: `TRUE`/`FALSE` (or `T`/`F`)
@@ -129,7 +128,7 @@ T + 1.2           # T will be treated as 1 while F = 0
 c("Hello", 123)   # 123 got converted to character string
 ```
 
-### Date & Time
+## Date & Time
 There are other types of data in R but we won't cover all of them. The only two things we should mention here are date and time.
 
 ```{r}
@@ -153,11 +152,11 @@ as.numeric(date_a)
 as.Date(-5000, origin = "1970-01-01")
 ```
 
-## Data Structure
+# Data Structure
 Comparing with other popular programming languages, data structure in R has been simplified a lot. For most data analytical tasks, this is not a weakness. Instead, it's a strength of R and makes it a lot easier to use. For now, all you need to know is the following 3 types: vector, list & data frame.
 
-### Vector & Matrix (array)
-#### Vector (1D array)
+## Vector & Matrix (array)
+### Vector (1D array)
 A vector is a series of values **with the same data type**. For example, `c(1, 2, 4, 7)` is a vector and so is `c("a", "c", "s", "z")`. As we discussed before, if you combine two different data types in one vector, all the values will be converted to the data type that has the greatest generalizability (see the example above). 
 
 You can access each element of a vector using the `[]` symbol. 
@@ -195,7 +194,7 @@ x2 <- c("Apple" = 1, "Banana" = 2, "Pear" = 3)
 x2
 ```
 
-#### Matrix & Array (2D/3+D array) (optional)
+### Matrix & Array (2D/3+D array) (optional)
 From the mathematical point of view, a vector is just a 1-D array with a customized length of *N* (1 x *N*). If we want to extend this concept a little further, for example, to a *m x n* matrix or a *a1 x a2 x a3 x ...* multi-dimensional array, thanks to the statistical background of R, we also have native supports for these mathematical concepts in R. 
 
 **Note that although matrix & array are quite useful for certain mathematical calculations, they are NOT the most common way we deal with data in R. The major restriction of a matrix/array is that, similar with a vector, these formats require all the values inside share the same data type. This brings up a huge inflexibility for real-life data where one column could be numbers while the other could be character strings. That's why in most cases when we use R, we use `data.frame` or `tibble`, which we will talk about later, to store the data. **
@@ -228,7 +227,7 @@ ar <- array(1:24, dim = c(2, 3, 4))
 dim(ar)
 ```
 
-### List
+## List
 A list is also a series of values but unlike vector, it does **NOT** have any requirements for its elements. You can mix up numbers, characters, date, functions(!) and even another list together. Similar with vector, you can also give names to elements at the step of creating the list
 
 ```{r}
@@ -265,7 +264,7 @@ lapply(x, sum)
 
 In the example above, `lapply` applied the function `sum` to every element of a list of 3 vector and return the results as a list of 3 numbers.
 
-### Data Frame & tibble
+## Data Frame & tibble
 As we discussed before, most of the data we are analyzing today are organized in a way that we use "column" to organize the same type of data. For example, the market price for different items & the interview comments from different participants. As a result, the term "data frame" was invented in language S, the language before R, and was re-implemented in R and Python recently through `pandas`. You can find the definition of "data frame" in the help page of `?data.frame` in R, which says,
 
 > A data frame is a list of variables of the same number of rows with unique row names.
@@ -397,3 +396,27 @@ system.time({
 
 
 In the end, although we are talking about performance a lot here, in most cases in our life, this is not part of our concerns. Most of the datasets we used at work are just not big enough that we need to worry about performance. If you just started to learn R, you should focus on the contents of Chapter 2 & 3, before spending time on understanding the mechanism behind all these things. 
+
+# Summary
+- Basics
+  - RStudio is an IDE while R is the actual software
+  - Enter code in editor and `Control/Cmd + Enter` to execute them in console
+  - `<-` is the assignment symbol in R
+  - Enter `?functionName` to find help.
+  - Functions handle most of the operations in R. 
+  - Use `functionName(...)` to execute a function.
+  - Use `functionName <- function( arguments ) { Action }` to define a function. 
+  - R package is a collection of r functions written by other people. 
+- Data Type
+  - Logical: `T`/`F`
+  - Integer: `1L`
+  - Double: `1.23`
+  - Character: `"1.23"`
+  - Date, Time
+- Data Structure
+  - Vector & Matrix
+  - List
+  - Data.frame & Tibble
+- Control Statements
+  - `if`: `if (Condition) { Action 1 } else { Action 2 }`
+  - `for`: `for (i in values) { Actions}`
