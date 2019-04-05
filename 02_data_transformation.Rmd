@@ -1,0 +1,16 @@
+---
+title: "Chapter 2 - Data Transformation using Tidyverse"
+subtitle: "Mutate, Summarize, Gather & Spread - It's time for some data spells"
+author: "Hao Zhu, Thomas Travison"
+date: "2019-04-05 (updated `r Sys.Date()`)"
+output: 
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+---
+
+

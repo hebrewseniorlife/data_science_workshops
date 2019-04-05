@@ -2,7 +2,7 @@
 title: "Chapter 1 - R Programming Fundamentals"
 subtitle: "Things you probably should know before you start to use R"
 author: "Hao Zhu, Thomas Travison"
-date: "4/1/2019"
+date: "2019-04-01 (updated `r Sys.Date()`)"
 output: 
   html_document:
     theme: cosmo
