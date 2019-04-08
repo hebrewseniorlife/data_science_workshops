@@ -1567,7 +1567,7 @@ div.tocify {
 <h1 class="title toc-ignore">Chapter 1 - R Programming Fundamentals</h1>
 <h3 class="subtitle">Things you probably should know before you start to use R</h3>
 <h4 class="author">Hao Zhu, Thomas Travison</h4>
-<h4 class="date">4/1/2019 updated 2019-04-05</h4>
+<h4 class="date">2019-04-01 (updated 2019-04-07)</h4>
 
 </div>
 
@@ -1857,13 +1857,13 @@ tibble(
 </div>
 <div id="control-statements" class="section level1">
 <h1>Control Statements</h1>
-<div id="if-statement" class="section level2">
-<h2>if Statement</h2>
+<div id="conditional-logics" class="section level2">
+<h2>Conditional Logics</h2>
 <div id="logical-operators" class="section level3">
 <h3>Logical operators</h3>
 <p>Common logical operators in R includes == (equal to), != (not equal to), &lt;, &gt;, &lt;= (smaller or equal to), &gt;= (larger or equal to), %in% (within), ! (NOT).</p>
 </div>
-<div id="if-statement-1" class="section level3">
+<div id="if-statement" class="section level3">
 <h3>if Statement</h3>
 <p>The syntax for R’s if statement looks like below</p>
 <pre class="r"><code>if (condition) {
@@ -1889,23 +1889,28 @@ if (x == 2) {
 # can't be handled by regular if statement.
 x == 2</code></pre>
 <pre><code>## [1] FALSE  TRUE FALSE FALSE FALSE</code></pre>
+</div>
+<div id="ifelse-function" class="section level3">
+<h3><code>ifelse</code> function</h3>
 <p>For this kind of vectors, consider use the function <code>ifelse</code> instead. Unlike <code>if</code>, <code>ifelse</code> works when the length of conditions is larger than 1. We will talk about this in details in the future.</p>
 <pre class="r"><code>ifelse(x != 3, &quot;A&quot;, &quot;B&quot;)</code></pre>
 <pre><code>## [1] &quot;A&quot; &quot;A&quot; &quot;B&quot; &quot;A&quot; &quot;A&quot;</code></pre>
+<p>Clearly, there are some fundemental differences between <code>if () {} else {}</code> and the <code>ifelse()</code> function. The prior one is designed mostly for conditional “actions” while the later one is mostly used for conditional values for a vector.</p>
 </div>
 </div>
 <div id="for-loops" class="section level2">
 <h2>for loops</h2>
-<p>R’s syntax for <code>for</code> loop looks like below.</p>
+<p>Looping is another important concept in programming. It allows you run an action repeatly with a dynamic parameter. R’s syntax for <code>for</code> loop looks like below. Here we are trying to fill in a vector one by one with some values.</p>
 <pre class="r"><code>x &lt;- c()
 for (i in 1:5) {
   x[i] &lt;- letters[i]
 }
 x</code></pre>
 <pre><code>## [1] &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot; &quot;e&quot;</code></pre>
+<p><code>for</code> loops provide a very flexible way of doing repeating tasks. It is extremely useful especially when situations are complicated.</p>
 <div id="extended-reading-read-this-when-you-already-have-some-backgrounds-in-r" class="section level4">
 <h4>Extended Reading (Read this when you already have some backgrounds in R)</h4>
-<p>There is a common misunderstanding that <code>for</code> loop in R is quite slow. In fact, this impression was made mostly due to the fact that many people are using <code>for</code> loop in the wrong way. First of all, as we discussed above, if you write a for loop looping across rows in a data frame/tibble, obviously your code will be quite slow due to the design of data frame. Second, due to the internal mechanism of R, the performance of a <code>for</code> loop can be heavily impacted by the way how people write their code. The details of these are discussed in Hadley’s <a href="https://adv-r.hadley.nz/index.html">Advanced R</a>, which is a really good book to read after you use R for a while and you need some advanced knowledge.</p>
+<p>There is a common misunderstanding that <code>for</code> loop in R is quite slow. Sometimes you can even find people on places like forums or Stack Overflow claiming that you should never use for loop in R. In fact, this impression is incorrect. People holding such opinions online either lack some understandings to the mechanism or don’t have time to explain. First of all, as we discussed above, if you write a for loop looping across rows in a data frame/tibble, obviously your code will be quite slow due to the design of data frame. Second, due to the internal mechanism of R, the performance of a <code>for</code> loop can be heavily impacted by the way how people write their code. Your <code>for</code> loop code will have an excellent performance as long as you are not wasting time on creating pointless memory references. You can find a comparison in the examples below. The details of these are discussed in Hadley’s <a href="https://adv-r.hadley.nz/index.html">Advanced R</a>, which is a really good book to read after you use R for a while and you need some advanced knowledge.</p>
 <pre class="r"><code># Bad practice
 # This practice creates a new memory reference in every iteration and 
 # assign the new refernce id to the for_loop_bad variable. The 
@@ -1917,7 +1922,7 @@ system.time({
   }
 })</code></pre>
 <pre><code>##    user  system elapsed 
-##   4.489   0.058   4.546</code></pre>
+##   4.386   0.031   4.422</code></pre>
 <pre class="r"><code># Good practice
 # This practice modifies elements of the same object for 50000 times. 
 # The performance is almost linear.
@@ -1928,7 +1933,7 @@ system.time({
   }
 })</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.021   0.000   0.021</code></pre>
+##   0.021   0.000   0.020</code></pre>
 <p>In the end, although we are talking about performance a lot here, in most cases in our life, this is not part of our concerns. Most of the datasets we used at work are just not big enough that we need to worry about performance. If you just started to learn R, you should focus on the contents of Chapter 2 &amp; 3, before spending time on understanding the mechanism behind all these things.</p>
 </div>
 </div>

@@ -1,6 +1,6 @@
 ---
 title: "Chapter 2 - Data Transformation using Tidyverse"
-subtitle: "Mutate, Summarize, Gather & Spread - It's time for some data spells"
+subtitle: "Mutate, Summarize, Gather & Spread - Time for some R magic spells"
 author: "Hao Zhu, Thomas Travison"
 date: "2019-04-05 (updated `r Sys.Date()`)"
 output: 
@@ -13,4 +13,18 @@ output:
       print: false
 ---
 
+`Tidyverse` is a collection of 8 awesome R packages, including:
 
+- `dplyr`: Data manipulation (Chapter 2)
+- `tidyr`: Data Long/Wide Transformation (Chapter 2)
+- `purrr`: List-based manipulation (Chapter 2)
+- `tibble`: Improved version of data.frame (Chapter 1)
+- `readr`: Improved data reading methods (Chapter 3)
+- `stringr`: String Operations using regular expression
+- `forcats`: Categorical Analyses
+- `ggplot2`: Data Visualizations with a set of grammar (Chapter 5)
+
+In this chapter, since we will talk about data transformation, we will focus on `dplyr` and `tidyr`. We will also give a basic introduction to list-based analyses using `purrr` at the very end. For the rest of the packages, we will learn as we proceed forward. 
+
+# Tidy data
+One of the greatest inventions of `tidyverse` is that it comes up with theory that describes the general practice of a includes a set of verbs to describe the process of "data transformation".

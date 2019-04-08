@@ -317,7 +317,7 @@ tribble(
 ```
 
 # Control Statements
-## if Statement
+## Conditional Logics
 ### Logical operators
 Common logical operators in R includes == (equal to), != (not equal to), <, >, <= (smaller or equal to), >= (larger or equal to), %in% (within), ! (NOT).
 
@@ -351,14 +351,17 @@ if (x == 2) {
 x == 2
 ```
 
+### `ifelse` function
 For this kind of vectors, consider use the function `ifelse` instead. Unlike `if`, `ifelse` works when the length of conditions is larger than 1. We will talk about this in details in the future. 
 
 ```{r}
 ifelse(x != 3, "A", "B")
 ```
 
+Clearly, there are some fundemental differences between `if () {} else {}` and the `ifelse()` function. The prior one is designed mostly for conditional "actions" while the later one is mostly used for conditional values for a vector. 
+
 ## for loops
-R's syntax for `for` loop looks like below. 
+Looping is another important concept in programming. It allows you run an action repeatly with a dynamic parameter. R's syntax for `for` loop looks like below. Here we are trying to fill in a vector one by one with some values. 
 ```{r}
 x <- c()
 for (i in 1:5) {
@@ -367,8 +370,10 @@ for (i in 1:5) {
 x
 ```
 
+`for` loops provide a very flexible way of doing repeating tasks. It is extremely useful especially when situations are complicated. 
+
 #### Extended Reading (Read this when you already have some backgrounds in R)
-There is a common misunderstanding that `for` loop in R is quite slow. In fact, this impression was made mostly due to the fact that many people are using `for` loop in the wrong way. First of all, as we discussed above, if you write a for loop looping across rows in a data frame/tibble, obviously your code will be quite slow due to the design of data frame. Second, due to the internal mechanism of R, the performance of a `for` loop can be heavily impacted by the way how people write their code. The details of these are discussed in Hadley's [Advanced R](https://adv-r.hadley.nz/index.html), which is a really good book to read after you use R for a while and you need some advanced knowledge. 
+There is a common misunderstanding that `for` loop in R is quite slow. Sometimes you can even find people on places like forums or Stack Overflow claiming that you should never use for loop in R. In fact, this impression is incorrect. People holding such opinions online either lack some understandings to the mechanism or don't have time to explain. First of all, as we discussed above, if you write a for loop looping across rows in a data frame/tibble, obviously your code will be quite slow due to the design of data frame. Second, due to the internal mechanism of R, the performance of a `for` loop can be heavily impacted by the way how people write their code. Your `for` loop code will have an excellent performance as long as you are not wasting time on creating pointless memory references. You can find a comparison in the examples below. The details of these are discussed in Hadley's [Advanced R](https://adv-r.hadley.nz/index.html), which is a really good book to read after you use R for a while and you need some advanced knowledge. 
 
 ```{r}
 # Bad practice
@@ -392,8 +397,6 @@ system.time({
   }
 })
 ```
-
-
 
 In the end, although we are talking about performance a lot here, in most cases in our life, this is not part of our concerns. Most of the datasets we used at work are just not big enough that we need to worry about performance. If you just started to learn R, you should focus on the contents of Chapter 2 & 3, before spending time on understanding the mechanism behind all these things. 
 
