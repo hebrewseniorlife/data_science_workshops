@@ -1,0 +1,89 @@
+---
+title: "Chapter 2 - Read Data into R"
+subtitle: "From csv, excel, SAS, stata, Web API (including REDCap) and SQL"
+author: "Hao Zhu, Thomas Travison"
+date: "2019-04-08 (updated `r Sys.Date()`)"
+output: 
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+---
+
+In this chapter, we will go through the steps of reading data into R from different formats. Thanks to the fast growing R user community, R has access to most of the common data formats today. For static files, we usually choose tools from `readr`, `haven` and `readxl`. For databases accessible through web API, it is recommended to use `httr`. R also have access to most popular database plateforms through the `odbc` package and the corresponding database drivers. 
+
+# Static Data Files
+
+## readr: Flat text-based Data files
+Flat files include formats such as `.csv`, `.tsv` `.txt` or sometimes even unrecognizable. The general rule of thumb to identify these files is that if you can open up the file using a text editor, that file belongs to this category. Although base R has its built-in function such as `read.csv`, `read.tsv` to do some of these tasks, it is recommended to use the `readr` package, which is already included in the `tidyverse` bundle to read in those data. The difference between the `readr` package and those base R function is that functions in `readr` can usually handle column types better. 
+
+```{r}
+library(tidyverse) # you can also do library(readr) to load 
+                   # this specific package
+```
+
+```{r, eval=FALSE}
+# Not evaluating
+read_csv("data.csv")
+read_tsv("data.tsv")
+read_file("data.txt") # read file as one string
+read_lines("data.txt") # read file as a vector of all lines
+```
+
+Here you can use either relative path or absolute path to the data files you have. If your data is stored somewhere online, you can also put the link here directly. 
+
+```{r}
+dt <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/jobs_gender.csv")
+dim(dt)
+```
+
+`readr` also comes with functionalities to export data from R to files. 
+
+```{r}
+dt <- tibble::tibble(
+  a = 1:4,
+  b = letters[1:4]
+)
+write_csv(dt, "dt.csv")
+write_tsv(dt, "dt.tsv")
+```
+
+## `haven`: SAS, Stata and SPSS files
+Package `haven` provides support to dataset exported by SAS, stata & SPSS. It supports reading from the following formats:
+
+**SAS**: `read_sas()` reads `.sas7bdat`, `.sas7bcat`; `read_xpt()` reads `.xpt` (SAS XPORT files ver 5 & 8).
+
+**SPSS**: `read_sav()` reads `.sav`; `read_por` reads `.por`.
+
+**Stata**: `read_dta` reads `.dta` (up to version 15).
+
+It also supports writing from the following formats:
+
+**SAS**: `write_xpt()` for `.xpt` files (FDA submission); `write_sas()` exists but may not always work as it's still work in progress.
+
+**SPSS**: `write_sav()` for `.sav`
+
+**Stata**: `write_dta()` for `.dta`
+
+Here is an example of reading a `.sas7bdat` file from the US CDC website. 
+```{r}
+dm_sas <- haven::read_sas("https://www.cdc.gov/nchs/tutorials/dietary/Downloads/demoadv.sas7bdat")
+dim(dm_sas)
+```
+
+```{r}
+rmarkdown::paged_table(head(dm_sas))
+```
+
+You may wonder where the column labels are. Indeed, the column labels are read in. You are able to see them in the rendered data preview in RStudio. 
+
+![](images/haven_label.png)
+
+These labels are stored as an "attribute" for **each column**. Attribute is a form of data attached to an object. 
+
+```{r}
+attributes(dm_sas$SEQN)
+```
