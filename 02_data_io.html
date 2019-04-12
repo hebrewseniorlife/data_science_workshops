@@ -2989,7 +2989,7 @@ REDCapR::redcap_write_oneshot(
 ## [1] &quot;3&quot;
 ## 
 ## $elapsed_seconds
-## [1] 0.5096586
+## [1] 0.4900727
 ## 
 ## $raw_text
 ## [1] &quot;&quot;</code></pre>
@@ -3014,8 +3014,8 @@ redcap_request &lt;- POST(
 </iframe>
 </div>
 </div>
-<div id="database-access" class="section level1">
-<h1>Database Access</h1>
+<div id="database" class="section level1">
+<h1>Database</h1>
 <p>There are several different types of databases, MySQL, SQL server, PostgreSQL, etc. In the past, R used to have a separate package for each major database platform. Today, we tend to encourage you to use the <code>odbc</code> (with specific drivers installed) + <code>DBI</code> to do the work because <code>odbc</code> fills the gap among different databases and provides a unified and consistant interface to all plateforms.</p>
 <p>The best resource to learn more about databases in R is <a href="https://db.rstudio.com/">RStudio’s Database page</a>.</p>
 <p>Here is an example of setting up an connection to a running MySQL database.</p>

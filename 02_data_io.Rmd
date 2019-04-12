@@ -163,7 +163,7 @@ You will be able to find the documentations of all these variables on the offici
 
 <iframe src="redcap_doc.html" height="400px" width="100%"></iframe>
 
-# Database Access
+# Database
 There are several different types of databases, MySQL, SQL server, PostgreSQL, etc. In the past, R used to have a separate package for each major database platform. Today, we tend to encourage you to use the `odbc` (with specific drivers installed) + `DBI` to do the work because `odbc` fills the gap among different databases and provides a unified and consistant interface to all plateforms. 
 
 The best resource to learn more about databases in R is [RStudio's Database page](https://db.rstudio.com/).

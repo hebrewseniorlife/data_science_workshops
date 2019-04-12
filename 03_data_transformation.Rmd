@@ -16,19 +16,78 @@ output:
 
 `Tidyverse` is a collection of 8 awesome R packages, including:
 
-- `dplyr`: Data manipulation (Chapter 2)
-- `tidyr`: Data Long/Wide Transformation (Chapter 2)
-- `purrr`: List-based manipulation (Chapter 2)
+- `dplyr`: Data manipulation (Chapter 3)
+- `tidyr`: Data Long/Wide Transformation (Chapter 3)
+- `purrr`: List-based manipulation (Chapter 3)
 - `tibble`: Improved version of data.frame (Chapter 1)
-- `readr`: Improved data reading methods (Chapter 3)
+- `readr`: Improved data reading methods (Chapter 2)
 - `stringr`: String Operations using regular expression
 - `forcats`: Categorical Analyses
 - `ggplot2`: Data Visualizations with a set of grammar (Chapter 5)
 
 In this chapter, since we will talk about data transformation, we will focus on `dplyr` and `tidyr`. We will also give a basic introduction to list-based analyses using `purrr` at the very end. For the rest of the packages, we will learn as we proceed forward. 
 
+```{r, include = F}
+library(tidyverse)
+library(kableExtra)
+```
+
 # Tidy data
-One of the greatest inventions of `tidyverse` is that it comes up with theory of a standardized way to organize values within a dataset. In Hadley's 2014 [tidy data](https://www.jstatsoft.org/article/view/v059i10/v59i10.pdf) paper, 
+One of the greatest inventions of `tidyverse` is that it comes up with theory of a standardized way to organize values within a dataset. In Hadley's 2014 [tidy data](https://www.jstatsoft.org/article/view/v059i10/v59i10.pdf) paper, he summarized out the principles of a tidy data:
+
+1. Each variable forms a column.
+2. Each observation forms a row.
+3. Each type of observational unit forms a table
+
+Language is pale without an example. For example, in a clinical study, participants' demographical information, such as sex, date of birth and race, is usually considered as "participants' level" data. The observational unit is per-person. At the same time, if we ask them some questions every time they came in, these kind of data are longitudinal and the observational unit is per-visit. Thus, these two kinds of data should be organized in two tables. 
+
+In the tidy data paper, Hadley quoted Leo Tolstoy's words "Happy families are all alike; every unhappy family is unhappy in its own way." and commented
+
+> Like families, tidy datasets are all alike but every messy dataset is messy in its own way.
+
+Using the longitudinal data we discussed before as an example, one can totally organize the data in the way below. However, this data is messy and is not suitable for lots of computing needs, eg. calculating the avaerage of each test over all visits, especially when the size of table is getting bigger. We need to do some format transformation first. 
+
+```{r, echo = F}
+messy_dt <- tibble(
+  id = c(1, 2, 3),
+  test1_v1 = sample(100, 3),
+  test1_v2 = sample(100, 3),
+  test1_v3 = sample(100, 3),
+  test2_v1 = sample(100, 3),
+  test2_v2 = sample(100, 3),
+  test2_v3 = sample(100, 3)
+) 
+
+messy_dt %>%
+  kable() %>%
+  kable_styling(full_width = F)
+```
+
+On the other hand, the following two tables are generally considered as tidy. Note that these two tables below are representing the same information as the table above using totally different structures. We usually refer this process as "tidying up" a data table. 
+
+```{r, echo = F}
+messy_dt %>%
+  gather(var, value, -id) %>%
+  separate(var, c("test", "visit")) %>%
+  kable() %>%
+  kable_styling(full_width = F, position = "float_left")
+```
+
+```{r, echo = F}
+messy_dt %>%
+  gather(var, value, -id) %>%
+  separate(var, c("test", "visit")) %>%
+  spread(test, value) %>%
+  kable() %>%
+  kable_styling(full_width = F)
+```
+
+The concepts of `tidy data` is a theory of good practice. In fact, if you are an experienced data analyst from another language, you probably know that from some part of your heart already. This concept gives this thing, which often called "experience" a name to call and a set of verb to decribe the action of transformation among these formats. In R, these actions are included in the `tidyr` package, which we will discuss in the next section. 
+
+
+
+# tidyr
+
 
 
 # [< Back to Index](/)
