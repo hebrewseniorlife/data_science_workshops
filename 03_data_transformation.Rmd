@@ -65,6 +65,7 @@ messy_dt %>%
 
 On the other hand, the following two tables are generally considered as tidy. Note that these two tables below are representing the same information as the table above using totally different structures. We usually refer this process as "tidying up" a data table. 
 
+
 ```{r, echo = F}
 messy_dt %>%
   gather(var, value, -id) %>%
@@ -82,12 +83,50 @@ messy_dt %>%
   kable_styling(full_width = F)
 ```
 
-The concepts of `tidy data` is a theory of good practice. In fact, if you are an experienced data analyst from another language, you probably know that from some part of your heart already. This concept gives this thing, which often called "experience" a name to call and a set of verb to decribe the action of transformation among these formats. In R, these actions are included in the `tidyr` package, which we will discuss in the next section. 
+The concepts of `tidy data` is a theory of good practice. In fact, if you are an experienced data analyst from other languages, you probably know that from some part of your heart already. This concept gives a name to what we often called "experience"  and a set of verb to decribe the action of transformation among these formats. In R, these actions are performed via three verbs from `tidyr` package, namely `gather`, `spread` and `separate`. 
 
 
 
 # tidyr
+One metaphor of tidying up a dataset could be playing with sand. When you try to hold the sand with your hand, the sand `gather` together and become tall and narrow. When you smash the sand with your fist, it `spread` out and become thin and wide.
 
+- gather: wide to tall
+- spread: tall to wide
+- separate: separate *ONE* multi-info column into *multiple* columns
 
+Let's use the messy data above as an example. 
+```{r}
+library(tidyverse)
+library(rmarkdown) # for paged_table
+messy_dt <- tibble(
+  id = c(1, 2, 3),
+  test1_v1 = sample(100, 3),
+  test1_v2 = sample(100, 3),
+  test1_v3 = sample(100, 3),
+  test2_v1 = sample(100, 3),
+  test2_v2 = sample(100, 3),
+  test2_v3 = sample(100, 3)
+) 
+paged_table(messy_dt)
+```
+
+`gather` collects data from all specified columns (if not specified, all columns) and turned them from columns to rows. Column names go to the "key" column while values go to the "value" column. 
+
+```{r}
+paged_table(gather(messy_dt))
+```
+
+In this process, two new columns will be created to replace all of the original columns. You can specify the new column names in `gather()`.
+
+```{r}
+paged_table(gather(messy_dt, "variable", "values"))
+```
+
+In this example, we actually don't need `id` column to be gathered because that's our identifier column. You can take it off.
+```{r}
+paged_table(gather(messy_dt, "var", "value", -id))
+```
+
+Now it's also a good time to introduce the concept of piping in R. Mainly used by `tidyverse` packages but also adopted by a lot of others, piping or `%>%` is nothing but a structure that makes your code more readable. Taking the previous command as an example. Here we want to transform the `messy_dt` dataset and then print out the result. However, the way we wrote the function actually starts with the `paged_table` function and the first step of "gathering" locates somewhere in the middle. The sequence of the code has no impact on the results but it affects how we read and understand the code. Here, we can improve this experience by re-writing the 
 
 # [< Back to Index](/)
