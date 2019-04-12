@@ -12,26 +12,8 @@ output:
       print: false
 ---
 
-```{r, echo = FALSE}
-library(shiny)
-div(
-  class = "row",
-  div(
-    class = "col-xs-4",
-    tags$h3(icon("chevron-left"), "Left")
-  ),
-  div(
-    class = "col-xs-4",
-    tags$h3(icon("home"), 
-            tags$a("Index", href = "/"))
-  ),
-  div(
-    class = "col-xs-4",
-    tags$h3(icon("chevron-right"), 
-            tags$a("Next", href = "/02_data_io.html"))
-  )
-)
-```
+[< Back to Index](/)
+
 
 This chapter below gives you an introduction of using R with RStudio. Unlike many other tutorials, we not only teach you the real "basics" but also give you a deeper explanations on how and why R works in the way it is. Some of the points we discuss here might seem a little abstract at first but they will help you understand the contents in following chapters in a much better way.
 
@@ -443,3 +425,5 @@ In the end, although we are talking about performance a lot here, in most cases 
 - Control Statements
   - `if`: `if (Condition) { Action 1 } else { Action 2 }`
   - `for`: `for (i in values) { Actions}`
+  
+# [< Back to Index](/)

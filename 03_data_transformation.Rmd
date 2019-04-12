@@ -12,6 +12,8 @@ output:
       print: false
 ---
 
+[< Back to Index](/)
+
 `Tidyverse` is a collection of 8 awesome R packages, including:
 
 - `dplyr`: Data manipulation (Chapter 2)
@@ -27,3 +29,6 @@ In this chapter, since we will talk about data transformation, we will focus on 
 
 # Tidy data
 One of the greatest inventions of `tidyverse` is that it comes up with theory of a standardized way to organize values within a dataset. In Hadley's 2014 [tidy data](https://www.jstatsoft.org/article/view/v059i10/v59i10.pdf) paper, 
+
+
+# [< Back to Index](/)

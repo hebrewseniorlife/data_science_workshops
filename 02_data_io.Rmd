@@ -12,6 +12,8 @@ output:
       print: false
 ---
 
+[< Back to Index](/)
+
 In this chapter, we will go through the steps of reading data into R from different formats. Thanks to the fast growing R user community, R has access to most of the common data formats today. For static files, we usually choose tools from `readr`, `haven` and `readxl`. For databases accessible through web API, it is recommended to use `httr`. R also have access to most popular database plateforms through the `odbc` package and the corresponding database drivers. 
 
 # Static Data Files
@@ -221,3 +223,5 @@ dbDisconnect(con)
   - `odbc` provides standardized drivers for different database formats
   - `DBI` provides a syntax to communicate with database
     - `dbConnect`, `dbListTables`, `dbGetQuery`, `dbWriteTable` & `dbDisconnect`
+    
+# [< Back to Index](/)
