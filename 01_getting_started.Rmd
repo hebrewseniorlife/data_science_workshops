@@ -1,7 +1,6 @@
 ---
 title: "Chapter 1 - R Programming Fundamentals"
 subtitle: "Things you probably should know before you start to use R"
-author: "Hao Zhu, Thomas Travison"
 date: "2019-04-01 (updated `r Sys.Date()`)"
 output: 
   html_document:
@@ -12,6 +11,27 @@ output:
       smooth_scroll: true
       print: false
 ---
+
+```{r, echo = FALSE}
+library(shiny)
+div(
+  class = "row",
+  div(
+    class = "col-xs-4",
+    tags$h3(icon("chevron-left"), "Left")
+  ),
+  div(
+    class = "col-xs-4",
+    tags$h3(icon("home"), 
+            tags$a("Index", href = "/"))
+  ),
+  div(
+    class = "col-xs-4",
+    tags$h3(icon("chevron-right"), 
+            tags$a("Next", href = "/02_data_io.html"))
+  )
+)
+```
 
 This chapter below gives you an introduction of using R with RStudio. Unlike many other tutorials, we not only teach you the real "basics" but also give you a deeper explanations on how and why R works in the way it is. Some of the points we discuss here might seem a little abstract at first but they will help you understand the contents in following chapters in a much better way.
 
