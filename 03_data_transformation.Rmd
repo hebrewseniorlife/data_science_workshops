@@ -127,6 +127,15 @@ In this example, we actually don't need `id` column to be gathered because that'
 paged_table(gather(messy_dt, "var", "value", -id))
 ```
 
-Now it's also a good time to introduce the concept of piping in R. Mainly used by `tidyverse` packages but also adopted by a lot of others, piping or `%>%` is nothing but a structure that makes your code more readable. Taking the previous command as an example. Here we want to transform the `messy_dt` dataset and then print out the result. However, the way we wrote the function actually starts with the `paged_table` function and the first step of "gathering" locates somewhere in the middle. The sequence of the code has no impact on the results but it affects how we read and understand the code. Here, we can improve this experience by re-writing the 
+Now it's also a good time to introduce the concept of piping in R. Mainly used by `tidyverse` packages but also adopted by a lot of others, piping or `%>%` is nothing but a structure that makes your code more readable. Taking the previous command as an example. Here we want to transform the `messy_dt` dataset and then print out the result. However, the way we wrote the function actually starts with the `paged_table` function and the first step of "gathering" locates somewhere in the middle. The sequence of the code has no impact on the results but it affects how we read and understand the code. Here, we can improve this experience by re-writing the same code using the piping syntax. 
+
+```{r}
+messy_dt %>%
+  gather("var", "value", -id) %>%
+  paged_table()
+```
+
+Technically, the `%>%` symbol does nothing but **send the result on the left to the next function as its first argument**. By organizing your functions in such a way, you
+
 
 # [< Back to Index](/)

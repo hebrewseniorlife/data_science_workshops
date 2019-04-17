@@ -14,16 +14,15 @@ output:
 
 [< Back to Index](/)
 
-In this chapter, we will go through the steps of reading data into R from different formats. Thanks to the fast growing R user community, R has access to most of the common data formats today. For static files, we usually choose tools from `readr`, `haven` and `readxl`. For databases accessible through web API, it is recommended to use `httr`. R also have access to most popular database plateforms through the `odbc` package and the corresponding database drivers. 
+In this chapter, we will learn how to read data into R from different sources files. Thanks to the fast growing R user community, there are tools available to read most of the common data formats that exist today. For static files, we will use tools from the `readr`, `haven` and `readxl` packages. For databases accessible through web API, it is recommended to use the package `httr`. R users can also access popular database platforms through the `odbc` package and the corresponding database drivers. 
 
 # Static Data Files
 
 ## readr: Flat text-based Data files
-Flat files include formats such as `.csv`, `.tsv` `.txt` or sometimes even unrecognizable. The general rule of thumb to identify these files is that if you can open up the file using a text editor, that file belongs to this category. Although base R has its built-in function such as `read.csv`, `read.tsv` to do some of these tasks, it is recommended to use the `readr` package, which is already included in the `tidyverse` bundle to read in those data. The difference between the `readr` package and those base R function is that functions in `readr` can usually handle column types better. 
+Flat files include formats such as `.csv`, `.tsv` `.txt` or sometimes "unrecognizable" file types. Generally speaking, if you can open and view the file using a text editor, that file belongs to this category. Although base R has built-in functions to read in flat files (such as `read.csv`, `read.tsv`), it is recommended to use the `readr` package, (which is included in the `tidyverse` bundle) to read in these data. Functions in the `readr` package are better able to handle various column types compared to the base R functions. 
 
 ```{r}
-library(tidyverse) # you can also do library(readr) to load 
-                   # this specific package
+library(tidyverse) # you can also do library(readr) to load this specific package
 ```
 
 ```{r, eval=FALSE}
@@ -34,14 +33,20 @@ read_file("data.txt") # read file as one string
 read_lines("data.txt") # read file as a vector of all lines
 ```
 
-Here you can use either relative path or absolute path to the data files you have. If your data is stored somewhere online, you can also put the link here directly. 
+Here you can use either a *relative path* or an *absolute path* to your data files. You can find a detailed discussion about these two terms and the concept of *working directory` in R in the [Extended Topics](#extended-topics) section below. 
+
+If your data is stored online, you can also put the link here directly. 
 
 ```{r}
 dt <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/jobs_gender.csv")
+```
+
+You can check the dimension of the `dt` object. The result tells you this dataset has 2088 rows and 12 columns. 
+```{r}
 dim(dt)
 ```
 
-`readr` also comes with functionalities to export data from R to files. 
+`readr` also allows you to export data from R to files. 
 
 ```{r}
 dt <- tibble::tibble(
@@ -53,7 +58,7 @@ write_tsv(dt, "dt.tsv")
 ```
 
 ## `haven`: SAS, Stata and SPSS files
-Package `haven` provides support to dataset exported by SAS, stata & SPSS. It supports reading from the following formats:
+Package `haven` provides support to read in datasets that were created by SAS, stata & SPSS. Each function will accept the following formats:
 
 **SAS**: `read_sas()` reads `.sas7bdat`, `.sas7bcat`; `read_xpt()` reads `.xpt` (SAS XPORT files ver 5 & 8).
 
@@ -61,9 +66,9 @@ Package `haven` provides support to dataset exported by SAS, stata & SPSS. It su
 
 **Stata**: `read_dta` reads `.dta` (up to version 15).
 
-It also supports writing from the following formats:
+It also supports writing datasets to the following formats:
 
-**SAS**: `write_xpt()` for `.xpt` files (FDA submission); `write_sas()` exists but may not always work as it's still work in progress.
+**SAS**: `write_xpt()` for `.xpt` files (FDA submission); `write_sas()` exists but may not always work as it is still a work in progress.
 
 **SPSS**: `write_sav()` for `.sav`
 
@@ -75,21 +80,23 @@ dm_sas <- haven::read_sas("https://www.cdc.gov/nchs/tutorials/dietary/Downloads/
 dim(dm_sas)
 ```
 
+Function `head` only prints out the first 6 rows of the dataset so you can take a glance of the table. Here we also want to print out the table nicely in this tutorial. Therefore, we use `rmarkdown::paged_table()` so the table we see below have pages. The `::` symbol means that we want to use the `paged_table` explicitly from the `rmarkdown` library. In your mind, you can read this as "'s" in English (similar with the `$` sign for data frame. 
+
 ```{r}
 rmarkdown::paged_table(head(dm_sas))
 ```
 
-You may wonder where the column labels are. Indeed, the column labels are read in. You are able to see them in the rendered data preview in RStudio. 
+You may wonder where to find the column labels. Indeed, the column labels are read in from the data file, and are different than the column names. You are able to see them in the rendered data preview in RStudio. 
 
 ![](images/haven_label.png)
 
-These labels are stored as an "attribute" for **each column**. Attribute is a form of data attached to an object, which can be in any type. You can either use `attributes(x)` to access all attributes of an object or use `attr(x, "attribute_name")` to access specific attribute. 
+These labels are stored as an "attribute" for **each column**. An attribute is a piece of data attached to an object, which can be any type. You can either use `attributes(x)` to access all attributes of an object or use `attr(x, "attribute_name")` to access specific attribute. 
 
 ```{r}
 attr(dm_sas$RIAGENDR, "label") # Or you can try attributes(dm_sas$SEQN)
 ```
 
-In order to access labels for all columns, you can try to use the `purrr` package. We will talk about the details of using `purrr` in R in chapter 3 but here is a galance. If you chose to load `tidyverse` earlier instead of just `readr`, you don't need to load `purrr` again becuase it's already included in `tidyverse.
+In order to access labels for all columns, you can use the map_chr() function in the `purrr` package. The `purrr` is included in the `tidyverse` package, so as long as you loaded the `tidyverse` package earlier (instead of just `readr`), you already have access to this package.
 
 ```{r}
 map_chr(dm_sas, attr, "label")[1:5]
@@ -97,7 +104,7 @@ map_chr(dm_sas, attr, "label")[1:5]
 ```
 
 ## `readxl`: Excel Spreadsheet xls & xlsx
-`readxl` provides a very convenient way of reading excel spreadsheet. The usage is similar with `readr` and `haven`. The only difference is that many spreadsheets have multiple sheets of data. By default, the `read_excel` function in `readxl` will read the 1st sheet but you let the function know which sheet to read from. 
+`readxl` provides a convenient way to read in an excel spreadsheet using the function `read_excel`. By default, this function will read in the first worksheet, but the user can also specify which worksheet within the excel file you want to read.  
 
 ```{r, eval=FALSE}
 # Not evaluating
@@ -105,10 +112,10 @@ readxl::read_excel("tests.xls", sheet = 1)
 ```
 
 # Web API
-Other than static data files, another important source of data nowadays is Web API. For those who are not familiar with this term, you can imagine a web API as a librarian - if you need anything, you send out a request with specifications. The librarian will look for the item and return it to you. For those popular API services, you can usually find a specialized R package to faciliate that API. Otherwise, you could try to use the `httr` package as a more general approach. In this chapter, we will use `REDCap`, which is a data-collection tool widely used in clinical research as an example and demonstrate how to read data using either the more specific `REDCapR` package or the more general `httr`. 
+Another important source of data is a Web API. If you are not familiar with Web APIs, you can compare it to a librarian. When you need to find something, you send out a request with specifications. The librarian will look for the item and return it to you - similiarly, the Web API will take your request and find the data you are looking for. For popular API services, there often exists a specialized R package to faciliate access to that API. Otherwise, you can try to use the `httr` package, which provides a general approach to API access. In this chapter, we will focus on `REDCap`, which is a data-collection tool widely used in clinical research. We will demonstrate how to read data using the specialized `REDCapR` package and using the more general `httr` package. 
 
 ## `REDCapR`
-`REDCapR` is a well-maintained R Package to facilitate data downloading from REDCap. To get started, you will need these two things: 1. the web address where to read the data from; 2. an authentication token that ensures it is you who are using this API. Whenever you are given an token, you should pay extra attention to the security of this combination and not share the token with anyone else. In this example below, we created a demo project hosted at our redcap server with fake data. Here we are using the `redcap_read_oneshot()` function. The returned result is a named list. The real "data" that you are expecting is stored in the data item. 
+`REDCapR` is a well-maintained R Package to facilitate data downloading from REDCap. To get started, you will need two things: 1. the web address of your REDCap database; 2. an authentication token that ensures you have permission to access the API. Authentication tokens should be kept secure and not shared with anyone. In this example below, we created a demo project hosted on our REDCap server with fake data. Here we are using the `redcap_read_oneshot()` function. This function returns a named list. The actual "data" that you are expecting is stored in the data item within the list. 
 
 ```{r}
 library(REDCapR)
@@ -126,7 +133,7 @@ rmarkdown::paged_table(head(dt))
 ```
 
 
-It is also possible to add new data or update existing data to REDCap through the API. Here is an exmaple. We created a new data frame called `new_dt` with a new value `phone_1 = "2019-04-01"`. You can send this data back using the `redcap_write_oneshot()` function. 
+It is also possible to add new data to or update an existing data item in REDCap through the API. To demonstrate this, We created a new data frame called `new_dt` with a new value `phone_1 = "2019-04-01"`. You can send this data to the REDCap database using the `redcap_write_oneshot()` function. 
 
 ```{r}
 new_dt <- tibble(
@@ -141,7 +148,7 @@ REDCapR::redcap_write_oneshot(
 ```
 
 ## `httr`
-It is also possible to read from REDCap using the `httr` package. This method is more general and is what you should do when a designated R API package like `REDCapR` is not available or not well-maintained.  
+It is also possible use the `httr` package to read data from REDCap. This general package is preferred when a designated R API package (like `REDCapR`) is not available or not well-maintained.  
 
 ```{r}
 library(httr)
@@ -157,14 +164,14 @@ redcap_request <- POST(
 )
 ```
 
-You will be able to find the documentations of all these variables on the official documentation site. Since different APIs are implemented by different groups and people, they vary a lot in terms of the names. That's why except the URL, nothing is really set-in-stone here. In most cases, as long as you read and follow the documentation, you should be able to get it work. 
+You can find the documentation for these functions on the official documentation site. Since different APIs are implemented by different groups and people, the syntax to access different APIs varies greatly. In most cases, as long as you read and follow the documentation, you should be able to get it work. 
 
 **Example API documentation from REDCap**
 
 <iframe src="redcap_doc.html" height="400px" width="100%"></iframe>
 
 # Database
-There are several different types of databases, MySQL, SQL server, PostgreSQL, etc. In the past, R used to have a separate package for each major database platform. Today, we tend to encourage you to use the `odbc` (with specific drivers installed) + `DBI` to do the work because `odbc` fills the gap among different databases and provides a unified and consistant interface to all plateforms. 
+There are many different types of databases, including MySQL, SQL server, PostgreSQL, etc. In the past, R had a separate package for each major database platform. Today, we prefer to use `odbc` (with specific drivers installed) + `DBI` to access databases. The `odbc` package allows for a unified and consistant interface to all database platforms. 
 
 The best resource to learn more about databases in R is [RStudio's Database page](https://db.rstudio.com/).
 
@@ -181,7 +188,7 @@ con <- dbConnect(odbc::odbc(),
                  PWD       = "password")
 ```
 
-Other than connecting to a remote database, for beginners, you can setup a local database using your own machine and practice your skills there. To do that you will need `RSQLite` installed. In the example below, we started a connection to the blank in-memory database and tried to write the data we read from REDCap earlier `dt` into a table called `redcap_dt` in the database. 
+If you don't have a remote database that you want to access, you can setup a local database using your own machine and practice your skills there. To do that you will need to install the `RSQLite` package. In the example below, we started a connection to an empty, in-memory database and write the data we read from REDCap earlier `dt` into a table called `redcap_dt` in the database. 
 
 ```{r}
 library(RSQLite)
@@ -195,17 +202,47 @@ dbWriteTable(con, "redcap_dt", dt)
 dbListTables(con)
 ```
 
-Now let's try to read some data from the database. If you are familar with SQL, this code might look very familiar to you. Here we are using the `dbGetQuery` function which send a [SQL query](https://www.w3schools.com/sql/sql_select.asp) to the database and download the results. If you are not familar with SQL, I recommend you to **learn it someday in the future** because it will always be useful. An alternative plan is to go through next chapter of this book and learn the syntax of `dplyr`. There are a lot of similarities between `dplyr` and `SQL` and you can even use `dplyr` to query SQL directly. 
+We can also read data from the database. If you are familar with SQL, this code may be familiar to you. Here, we use the `dbGetQuery` function which send a [SQL query](https://www.w3schools.com/sql/sql_select.asp) to the database to download the results. If you are not familar with SQL, I recommend that you **learn it** because it will come in handy in many situations. Alternatively, in the next chapter we will discuss the syntax of `dplyr`. There are many similarities between `dplyr` and `SQL` - `dplyr` can even be used to query SQL directly. 
 
 ```{r}
 record1_dt <- dbGetQuery(con, "SELECT * FROM redcap_dt where record_id = 1")
 
 rmarkdown::paged_table(record1_dt)
 ```
-In the end, after you finish dealing with the database, it's always a good idea to disconnect them. 
+Once you are finished working with any database, it is always good practice to end your connection to the database to ensure security. 
 
 ```{r}
 dbDisconnect(con)
+```
+
+# Extended Topics
+## Absolute Path, Relative Path and Working Directory
+*Absolute path* is the full file path to a certain file/directory. It always allows the computer to find the file no matter where you started the program. Here are a few examples.
+
+**On Windows**
+- `C:/Users/you/Documents/my_files/file.txt`
+- `~/Documents/my_files/file.txt`
+
+**On Mac/Linux**
+- `/home/you/Documents/work/file.txt`
+- `~/work/file.txt`
+
+On the other hand, *relative path* starts from the *working directory*. You can find the current *working directory* on top of your R console in your RStudio.
+![](images/wd.png)
+
+In most cases, we manage working directories via RStudio Project. Whenever you open up an `.Rproj` file, you will be brought to the folder that this `.Rproj` locates and use that folder as the working directory.
+
+![](images/rproj.png)
+
+You can also obtain the path to the working directory within R via `getwd()` and change your working directory using`setwd()`
+
+```{r}
+getwd()
+```
+
+```{r, eval=F}
+# Not evaluating
+setwd("new_folder")
 ```
 
 # Summary
