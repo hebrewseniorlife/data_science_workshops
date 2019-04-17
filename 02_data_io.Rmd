@@ -33,7 +33,7 @@ read_file("data.txt") # read file as one string
 read_lines("data.txt") # read file as a vector of all lines
 ```
 
-Here you can use either a *relative path* or an *absolute path* to your data files. You can find a detailed discussion about these two terms and the concept of *working directory` in R in the [Extended Topics](#extended-topics) section below. 
+Here you can use either a *relative path* or an *absolute path* to your data files. You can find a detailed discussion about these two terms and the concept of *working directory` in R in the [Extended Topics](#extended_topics) section below. 
 
 If your data is stored online, you can also put the link here directly. 
 
