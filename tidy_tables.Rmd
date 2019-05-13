@@ -1,0 +1,36 @@
+---
+title: "Untitled"
+author: "Hao"
+date: "4/24/2019"
+output: html_document
+---
+
+```{r, message = F, warning=F}
+library(tidyverse)
+library(kableExtra)
+sable <- function(x) kable_styling(kable(x), full_width = F)
+```
+
+```{r}
+sable(table1)
+```
+
+```{r}
+sable(table2)
+```
+
+```{r}
+sable(table3)
+```
+
+```{r}
+sable(table4a)
+```
+
+```{r}
+sable(table4b)
+```
+
+```{r}
+sable(table5)
+```
