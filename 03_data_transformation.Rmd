@@ -25,7 +25,7 @@ output:
 - `forcats`: Categorical Analyses
 - `ggplot2`: Data Visualizations with a set of grammar (Chapter 5)
 
-In this chapter, since we will talk about data transformation, we will focus on `dplyr` and `tidyr`. We will also give a basic introduction to list-based analyses using `purrr` at the very end. For the rest of the packages, we will learn as we proceed forward. 
+In this chapter, we will talk about data transformation and will focus on `dplyr` and `tidyr`. We will also give a basic introduction to list-based analyses using `purrr`. As we continue forward in this training, we will discuss the other packages mentioned above. 
 
 ```{r, include = F}
 library(tidyverse)
@@ -33,47 +33,47 @@ library(kableExtra)
 ```
 
 # `dplyr` for data manipulation
-Data manipulation covers most of our common tasks including adding or droping new columns or rows, generating summary stats and implementing conditional logics for columns. 
+Data manipulation refers to most common analtyic tasks including adding or droping columns or rows, generating summary statistics and implementing conditional logics for columns. 
 
-`dplyr` comes with a set of "data manipulation verbs" that can natually express nearly all data manipulation tasks in English. This design makes it very easy to learn and talk in this language and is one of the biggest reasons why people use R. In the following section, we will start by showing you a quick example (we will use this example multiple times in the future) followed by a detailed explanation on some of the most useful pieces of `dplyr`. We will have a few exercises in this middle because this section is highly practical. 
+`dplyr` comes with a set of "data manipulation verbs" that can natually express nearly all data manipulation tasks in English. This design makes it very easy to learn and communicate in this language and is one of the biggest reasons why people use R. In the following section, we will start by showing you a quick example (we will use this example multiple times in the future) followed by a detailed explanation of some of the most useful pieces of `dplyr`. We will also have a few hands-on exercises to highlight the practicality of this package. 
 
 ## Getting Started
-In this example, we will use the `starwars` dataset, which is attached in `dplyr`. You need to load either `dplyr` or `tidyverse` to be able to access that. You can try to type `View(starwars)` in your R console to make sure you can access it. Here is a screenshot of how this data looks like. 
+In this example, we will use the `starwars` dataset, which is attached in `dplyr`. You need to load either `dplyr` or `tidyverse` to be able to access the dataset. You can type `View(starwars)` in your R console to make sure you can access it. Here is a screenshot of what this dataset looks like. 
 
 ![](images/starwars.png)
 
 ### Q1: What's the average height for all characters in Star Wars?
-Obviously, we have a `mean()` function inside base R. The `na.rm = T` specifies how to deal with `NA`(missing) values: here we want to remove ("rm") them 
+We know that we have a `mean()` function inside base R. The `na.rm = T` option within this function specifies how to deal with `NA`(missing) values: here we want to remove ("rm") them 
 ```{r}.
 mean(starwars$height, na.rm = T)
 ```
 
-We can also do it in the `dplyr` way. In `dplyr` we have a `summarize` function for generating any kinds of summary stats. Remember that **`summarize` always generates a new data frame**.
+We can also use `dplyr` to accomplish the same thing. In `dplyr` we have a `summarize` function, which generates many summary statistics. It is important to remember that **`summarize` always generates a new data frame**.
 ```{r}
 starwars %>%
   summarize(mean_height = mean(height, na.rm = T))
 ```
 
-Now it's also a good time to introduce the concept of piping in R. Mainly used by `tidyverse` packages but also adopted by a lot of others, piping or `%>%` is nothing but a structure that makes your code more readable. Technically, the `%>%` symbol does nothing but **send the result on the left to the next function as its first argument**. 
+Now is a good time to introduce the concept of 'piping' in R. Mainly used by `tidyverse` packages but also adopted by a lot of others, piping or `%>%` is simply a structure that makes your code more readable. Technically, the `%>%` symbol does nothing but **send the result on the left to the next function as its first argument**. 
 
 ### Q2: What's the average height for all human characters in Star Wars?
 
-In Base R, we can do
+In Base R, we can use:
 ```{r}
 mean(starwars[starwars$species == "Human", "height"], na.rm = T)
 ```
 
-With `dplyr`, we just add a row of `filter`. The `filter` function selects out every row that fits the positive condition. 
+With `dplyr`, we use a `filter`. The `filter` function selects out every row that fits the positive condition. 
 ```{r}
 starwars %>%
   filter(species == "Human") %>%
-  summarise(
+  summarize(
     mean_height = mean(height, na.rm = T)
   )
 ```
 
 ### Q3: What's the mean and stand deviation of height for all human characters who have yellow eyes?
-In Base R, we can do 
+In Base R, we can use: 
 ```{r}
 mean(starwars[starwars$species == "Human" & starwars$eye_color == "yellow", ]$height, 
      na.rm = T)
@@ -81,11 +81,11 @@ sd(starwars[starwars$species == "Human" & starwars$eye_color == "yellow", ]$heig
    na.rm = T)
 ```
 
-In `dplyr`, we don't need to make too many changes when things get complicated. 
+In `dplyr`, it is easier to deal with more complicated situations. 
 
 ```{r}
 starwars %>%
-  filter(species == "Human" & eye_color == "blue") %>%
+  filter(species == "Human" & eye_color == "yellow") %>%
   summarise(
     mean_height = mean(height, na.rm = T),
     sd_height = sd(height, na.rm = T)
@@ -93,14 +93,14 @@ starwars %>%
 ```
 
 ### Q4: What's the mean and stand deviation of height in all species?
-Base R, we can do it through `aggregate`, which is fine but the syntax is difficult to understand.
+Base R, we can use the `aggregate` function, but the syntax is difficult to understand.
 ```{r}
 aggregate(starwars$height, by = list(starwars$species), FUN = function(x) {
   c(mean = mean(x, na.rm = T), sd = sd(x, na.rm = T))
 })
 ```
 
-With `dplyr`, we will use the very powerful `group_by` function. 
+With `dplyr`, we will use the very powerful, and easy to understand, `group_by` function. 
 ```{r}
 starwars %>%
   group_by(species) %>%
@@ -112,7 +112,7 @@ starwars %>%
 
 ### Quick Exercise
 
-#### What are the average weights for human stratified by sex?
+#### What are the average weights for all humans stratified by sex?
 
 ## `dplyr` Verbs
 ### `select`
@@ -136,7 +136,7 @@ starwars %>%
 ```
 
 ### `filter`
-`filter` will select out rows that fit certain criterias. It take regular logical expressions in R and you can connect them with `&`(and) or `|`(or). Check [Chapter 1](/01_getting_started.html#control_statements) for details. 
+`filter` will select out rows that fit certain criteria. It takes regular logical expressions in R and you can connect multiple expressions together with `&`(and) or `|`(or). Check [Chapter 1](/01_getting_started.html#control_statements) for details. 
 
 ```{r}
 starwars %>%
@@ -155,7 +155,7 @@ starwars %>%
 ```
 
 ### `mutate`
-People use `mutate` to add new columns or change existing columns. A typical use case is to combine `mutate` with `ifelse` to make conditional values. 
+The `mutate` function can be used to add new columns or to change existing columns. A common usage is to combine `mutate` with `ifelse` to make conditional values. 
 ```{r}
 starwars %>%
   mutate(
@@ -166,10 +166,10 @@ starwars %>%
 ```
 
 ### `summarize`
-New users often mix up `mutate` and `summarize`. The main difference is that `mutate` works in the original data frame while `summarize` generates a new one. We showed quite a few examples previously so we will skip the example part here. 
+New users often mix up `mutate` and `summarize`. The main difference is that `mutate` works in the original data frame while `summarize` generates a new one. 
 
 ### `group_by`
-The only thing `group_by` does to a data frame is to put an "attribute" on it. The data frame itself still looks the same but when you send this data frame to other `dplyr` functions, those functions will know you want the actions to be done by groups. We can check the grouping information using `attributes()`.
+The `group_by` function puts an "attribute" on the data frame. 'group_by' does not change the contents of the data frame, but when you send this data frame to other `dplyr` functions, those functions will know that you want the actions to be done by groups. We can check the grouping information using `attributes()`.
 
 ```{r}
 starwars %>%
@@ -178,21 +178,23 @@ starwars %>%
 ```
 
 ### `join`
-In many cases, we need to merge two data frames. R's native `merge` function works but `dplyr`'s `join` functions are just better. There are 4 join functions that are frequently used: `left_join`, `right_join`, `full_join` and `inner_join`. See [this page](https://stat545.com/bit001_dplyr-cheatsheet.html) for details. 
+In many cases, we need to merge two data frames. R's native `merge` function works but `dplyr`'s `join` functions are much better. There are 4 join functions that are frequently used: `left_join`, `right_join`, `full_join` and `inner_join`. See [this page](https://stat545.com/bit001_dplyr-cheatsheet.html) for details. 
 
 ![](images/join-venn.png)
 
 ## Exercises
+We might not have enough time to go through the following exercises during the workshop but it's highly recommended for you to find a time and go through these exercises and make sure you really understand the concepts. These exercises are from the STATS 545 class from UBC (Canada). You are also recommended to read their [`dplyr` tutorial](https://stat545.com/block009_dplyr-intro.html), which is also well written. 
+
 http://stat545.com/Classroom/notes/cm005-exercise.nb.html
 
 # Tidy data
-One of the greatest inventions of `tidyverse` is that it comes up with theory of a standardized way to organize values within a dataset. In Hadley's 2014 [tidy data](https://www.jstatsoft.org/article/view/v059i10/v59i10.pdf) paper, he summarized out the principles of a tidy data:
+One of the greatest contributions of `tidyverse` is that it provides a theory for a standardized way to organize values within a dataset. In Hadley's 2014 [tidy data](https://www.jstatsoft.org/article/view/v059i10/v59i10.pdf) paper, he summarizes the principles of a tidy data:
 
 1. Each variable forms a column.
 2. Each observation forms a row.
 3. Each type of observational unit forms a table
 
-Let's take a look at the following 5 sets of tables. Despite the totally different structures, these tables are representing the same information. Is there a way for us to describe the transformations among these formats?
+Let's take a look at the following 5 sets of tables. Despite the very different structures, these tables represent the same information. How can we describe the transformations among these formats?
 
 ```{r, echo=FALSE}
 sable <- function(x, y) kable_styling(kable(x, caption = y), "condensed", full_width = F)
@@ -225,17 +227,17 @@ In the tidy data paper, Hadley quoted Leo Tolstoy's words "Happy families are al
 
 > Like families, tidy datasets are all alike but every messy dataset is messy in its own way.
 
-The concepts of `tidy data` is a theory of good practice. In fact, if you are an experienced data analyst from other languages, you probably know that from some part of your heart already. This concept gives a name to what we often called "experience"  and a set of verb to decribe the action of transformation among these formats. In R, these actions are performed via three verbs from `tidyr` package, namely `gather`, `spread`, `separate` and `unite`. 
+The concepts of `tidy data` is a theory of good practice. In fact, if you are an experienced data analyst from other languages, you already know the importance of keeping your data and programming 'tidy'. This concept gives a name to what we often called "experience"  and a set of verbs to decribe the action of transformation among these formats. In R, these actions are performed via four verbs from `tidyr` package, namely `gather`, `spread`, `separate` and `unite`. 
 
 # tidyr
-One metaphor of tidying up a dataset could be playing with sand. When you try to hold the sand with your hand, the sand `gather` together and become tall and narrow. When you smash the sand with your fist, it `spread` out and become thin and wide.
+One metaphor of tidying up a dataset could be playing with sand. When you try to hold the sand with your hand, the sand `gather`s together and becomes tall and narrow. When you smash the sand with your fist, it `spread`s out and becomes thin and wide.
 
 - gather: wide to tall
 - spread: tall to wide
 - separate: separate *ONE* multi-info column into *multiple* columns
 - unite: unite *multiple* columns into *one* column
 
-Let's create a messy data and use it as an example. This time we are trying to simulate an observational study with only 2 questions and 3 visits. The original maker of this dataset has never heard about tidy data so he organized the data in a very untidy way.
+Let's create a messy dataset and use it as an example. Here, we are simulating an observational study with only 2 questions and 3 visits. The original creator of this dataset is not familiar with tidy data so he organized the data in a very untidy way.
 
 ```{r}
 library(tidyverse)
@@ -261,7 +263,7 @@ messy_dt
 gather(messy_dt, key = "key", value = "value")
 ```
 
-In this example, all the data from the original data frame gets arranged into these two columns, `key` & `value`. Both columns are newly generated. The `key` column includes all the previously column names while the `value` column includes all the numbers. However, this is not very helpful in this case because it treats the `id` column as a regular data column while it should have been left outside of the opperation. Therefore, we need to instruct `gather` to include the right variables in the transformation (or to exclude what should not be included). You can do that via putting column names after the `value` argument. You can also choose to put column names you don't want after a minus sign. Similar with numeric vectors (Chapter 1), `:` here means "to" in English. `test1_v1:test2_v3` means every column between `test1_v1` and `test2_v3`. 
+In this example, all the data from the original data frame is arranged in these two columns, `key` & `value`. Both columns are newly generated. The `key` column includes all the previous column names while the `value` column includes all the numbers. However, this is not very helpful in this case because it treats the `id` column as a regular data column while it should have been left outside of the operation. Therefore, we need to instruct `gather` to include the correct variables in the transformation (or to exclude what should not be included). You can do that by putting column names after the `value` argument. You can also choose to put the column names that you don't want after a minus sign. Similar to numeric vectors (Chapter 1), `:` here means "to" in English. `test1_v1:test2_v3` means every column between `test1_v1` and `test2_v3`. 
 
 
 ```{r}
