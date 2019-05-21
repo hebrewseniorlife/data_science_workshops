@@ -327,6 +327,27 @@ messy_dt %>%
 In this section, we are going to provide a few examples here demonstrating how to solve some common tasks using `dplyr` and `tidyr`.
 
 ```{r}
+# Generating fake data. 
+
+## This function knocks off values from a vector at a random rate from 5% to 20%
+## add_missing(1:10)
+add_missing <- function(x) {
+  p_missing <- sample(5:20, 1) / 100
+  missing_index <- sample(length(x), round(length(x) * p_missing))
+  x[missing_index] <- NA
+  return(x)
+}
+dt <- tibble(
+  id = 1:100,
+  group = sample(c("A", "B"), 100, replace = T),
+  sex = sample(c("Male", "Female"), 100, replace = T),
+  smoking = sample(c(T, F), 100, replace = T, prob = c(0.1, 0.9)),
+  v1_gaitspeed = rnorm(100, mean = 1, sd = 0.2),
+  # v1_gripstrength = rnorm(),
+  v1_mri_available = rbinom(100, 1, 0.1),
+  v2_gaitspeed = rnorm(100, mean = 1, sd = 0.2),
+  v2_mri_available = rbinom(100, 1, 0.1)
+)
 ```
 
 
