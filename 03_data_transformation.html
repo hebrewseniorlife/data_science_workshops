@@ -1565,7 +1565,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Chapter 3 - Data Transformation using Tidyverse</h1>
 <h3 class="subtitle">Mutate, Summarize, Gather &amp; Spread - Time for some R magic spells</h3>
-<h4 class="date">2019-04-05 (updated 2019-05-15)</h4>
+<h4 class="date">2019-04-05 (updated 2019-05-20)</h4>
 
 </div>
 
@@ -1879,6 +1879,41 @@ div.tocify {
 ## 10 hermaphrodite Hutt       &lt;int [1]&gt;
 ## # … with 33 more rows</code></pre>
 </div>
+<div id="bind_rows-and-bind_cols" class="section level3">
+<h3><code>bind_rows</code> and <code>bind_cols</code></h3>
+<p><code>bind_rows</code> and <code>bind_cols</code> binds data frames together either by rows or columns, as suggested by their names. You can either supply a bunch of tables one by one or as a list.</p>
+<pre class="r"><code>nrow(starwars)</code></pre>
+<pre><code>## [1] 87</code></pre>
+<pre class="r"><code>nrow(bind_rows(starwars, starwars, starwars))</code></pre>
+<pre><code>## [1] 261</code></pre>
+<pre class="r"><code># Same
+nrow(bind_rows(list(starwars, starwars, starwars)))</code></pre>
+<pre><code>## [1] 261</code></pre>
+<p>One very useful trick when using <code>bind_rows</code> is that if your list is named, you can ask <code>bind_rows</code> to generate a new column storing the naming info using the <code>.id</code> argument.</p>
+<pre class="r"><code>sw_list &lt;- list(
+  A = starwars,
+  B = starwars, 
+  C = starwars
+)
+long_starways &lt;- bind_rows(sw_list, .id = &quot;new_column&quot;)
+long_starways$new_column</code></pre>
+<pre><code>##   [1] &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot;
+##  [18] &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot;
+##  [35] &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot;
+##  [52] &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot;
+##  [69] &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot;
+##  [86] &quot;A&quot; &quot;A&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot;
+## [103] &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot;
+## [120] &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot;
+## [137] &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot;
+## [154] &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot;
+## [171] &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;B&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot;
+## [188] &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot;
+## [205] &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot;
+## [222] &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot;
+## [239] &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot;
+## [256] &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot; &quot;C&quot;</code></pre>
+</div>
 <div id="join" class="section level3">
 <h3><code>join</code></h3>
 <p>In many cases, we need to merge two data frames. R’s native <code>merge</code> function works but <code>dplyr</code>’s <code>join</code> functions are much better. There are 4 join functions that are frequently used: <code>left_join</code>, <code>right_join</code>, <code>full_join</code> and <code>inner_join</code>. See <a href="https://stat545.com/bit001_dplyr-cheatsheet.html">this page</a> for details.</p>
@@ -2181,7 +2216,7 @@ div.tocify {
 </tbody>
 </table></div>
 </div></p>
-<p>(You can find these 5 example tables in the <code>tidyr</code> package, which is included in <code>tidyverse</code>.)</p>
+<p>(You can find all these 5 example tables in the <code>tidyr</code> package, which is included in <code>tidyverse</code>.)</p>
 <p>In the tidy data paper, Hadley quoted Leo Tolstoy’s words “Happy families are all alike; every unhappy family is unhappy in its own way.” and commented</p>
 <blockquote>
 <p>Like families, tidy datasets are all alike but every messy dataset is messy in its own way.</p>
@@ -2214,52 +2249,129 @@ messy_dt</code></pre>
 <pre><code>## # A tibble: 3 x 7
 ##      id test1_v1 test1_v2 test1_v3 test2_v1 test2_v2 test2_v3
 ##   &lt;dbl&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;
-## 1     1       61       85       70       89       30       94
-## 2     2       10       34       13       22       50        4
-## 3     3       54       40       42       88       47       70</code></pre>
+## 1     1       71       58       16       19       74       58
+## 2     2        1       21       13       48       81       70
+## 3     3       97       36       62       25       46       28</code></pre>
+<div id="gather" class="section level2">
+<h2><code>gather()</code></h2>
 <p><code>gather</code> collects data from all specified columns (if not specified, all columns) and turned them from columns to rows. Column names go to the “key” column while values go to the “value” column.</p>
-<pre class="r"><code>gather(messy_dt, key = &quot;key&quot;, value = &quot;value&quot;)</code></pre>
+<pre class="r"><code>gather(messy_dt, &quot;key&quot;, &quot;value&quot;)</code></pre>
 <pre><code>## # A tibble: 21 x 2
 ##    key      value
 ##    &lt;chr&gt;    &lt;dbl&gt;
 ##  1 id           1
 ##  2 id           2
 ##  3 id           3
-##  4 test1_v1    61
-##  5 test1_v1    10
-##  6 test1_v1    54
-##  7 test1_v2    85
-##  8 test1_v2    34
-##  9 test1_v2    40
-## 10 test1_v3    70
+##  4 test1_v1    71
+##  5 test1_v1     1
+##  6 test1_v1    97
+##  7 test1_v2    58
+##  8 test1_v2    21
+##  9 test1_v2    36
+## 10 test1_v3    16
 ## # … with 11 more rows</code></pre>
-<p>In this example, all the data from the original data frame is arranged in these two columns, <code>key</code> &amp; <code>value</code>. Both columns are newly generated. The <code>key</code> column includes all the previous column names while the <code>value</code> column includes all the numbers. However, this is not very helpful in this case because it treats the <code>id</code> column as a regular data column while it should have been left outside of the operation. Therefore, we need to instruct <code>gather</code> to include the correct variables in the transformation (or to exclude what should not be included). You can do that by putting column names after the <code>value</code> argument. You can also choose to put the column names that you don’t want after a minus sign. Similar to numeric vectors (Chapter 1), <code>:</code> here means “to” in English. <code>test1_v1:test2_v3</code> means every column between <code>test1_v1</code> and <code>test2_v3</code>.</p>
-<pre class="r"><code>gather(messy_dt, &quot;var&quot;, &quot;value&quot;, test1_v1:test2_v3)</code></pre>
+<p>In this example, all the data from the original data frame is arranged in these two columns, <code>key</code> &amp; <code>value</code>. Both columns are newly generated. The <code>key</code> column includes all the previous column names while the <code>value</code> column includes all the numbers. However, this is not very helpful in this case because it treats the <code>id</code> column as a regular data column too while it should have been left outside of the operation. In this case, we need to instruct <code>gather</code> to include the correct variables in the transformation (or to exclude what should not be included). Here it works in a very similar way as <code>dplyr::select</code>.</p>
+<pre class="r"><code>gather(messy_dt, &quot;key&quot;, &quot;value&quot;, test1_v1:test2_v3)</code></pre>
 <pre><code>## # A tibble: 18 x 3
-##       id var      value
+##       id key      value
 ##    &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
-##  1     1 test1_v1    61
-##  2     2 test1_v1    10
-##  3     3 test1_v1    54
-##  4     1 test1_v2    85
-##  5     2 test1_v2    34
-##  6     3 test1_v2    40
-##  7     1 test1_v3    70
+##  1     1 test1_v1    71
+##  2     2 test1_v1     1
+##  3     3 test1_v1    97
+##  4     1 test1_v2    58
+##  5     2 test1_v2    21
+##  6     3 test1_v2    36
+##  7     1 test1_v3    16
 ##  8     2 test1_v3    13
-##  9     3 test1_v3    42
-## 10     1 test2_v1    89
-## 11     2 test2_v1    22
-## 12     3 test2_v1    88
-## 13     1 test2_v2    30
-## 14     2 test2_v2    50
-## 15     3 test2_v2    47
-## 16     1 test2_v3    94
-## 17     2 test2_v3     4
-## 18     3 test2_v3    70</code></pre>
-<pre class="r"><code># equivalent to
-# gather(messy_dt, &quot;var&quot;, &quot;value&quot;, -id)
-# gather(messy_dt, &quot;var, &quot;value&quot;, test1_v1, test1_v2, test1_v3, test2_v1,
-#        test2_v2, test2_v3)</code></pre>
+##  9     3 test1_v3    62
+## 10     1 test2_v1    19
+## 11     2 test2_v1    48
+## 12     3 test2_v1    25
+## 13     1 test2_v2    74
+## 14     2 test2_v2    81
+## 15     3 test2_v2    46
+## 16     1 test2_v3    58
+## 17     2 test2_v3    70
+## 18     3 test2_v3    28</code></pre>
+</div>
+<div id="separate" class="section level2">
+<h2><code>separate()</code></h2>
+<p>In the long dataset we just got in the last step, we have 2 sets of data presenting simultaneously in column <code>key</code>. We have to find out a way to <code>separate</code> the information. Here comes the <code>separate()</code> function. Here to get things mroe literal, we are using the <code>%&gt;%</code> pipe symbol.</p>
+<pre class="r"><code>messy_dt %&gt;%
+  gather(&quot;key&quot;, &quot;value&quot;, test1_v1:test2_v3) %&gt;%
+  separate(key, into = c(&quot;test&quot;, &quot;visit&quot;))</code></pre>
+<pre><code>## # A tibble: 18 x 4
+##       id test  visit value
+##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt;
+##  1     1 test1 v1       71
+##  2     2 test1 v1        1
+##  3     3 test1 v1       97
+##  4     1 test1 v2       58
+##  5     2 test1 v2       21
+##  6     3 test1 v2       36
+##  7     1 test1 v3       16
+##  8     2 test1 v3       13
+##  9     3 test1 v3       62
+## 10     1 test2 v1       19
+## 11     2 test2 v1       48
+## 12     3 test2 v1       25
+## 13     1 test2 v2       74
+## 14     2 test2 v2       81
+## 15     3 test2 v2       46
+## 16     1 test2 v3       58
+## 17     2 test2 v3       70
+## 18     3 test2 v3       28</code></pre>
+<p>The data frame we are getting here is very ‘clean’ and fits the “tidy data principles” perfectly. This is the so-called “tidy data”. This form of data may not be the best form for human readers to consume. However, it is really easy to programatically transform this form of data into any other formats.</p>
+</div>
+<div id="spread" class="section level2">
+<h2><code>spread()</code></h2>
+<p><code>spread()</code> is the reverse verb of <code>gather()</code>. It turns a tall table back to wide based on “key” and “value”. By combining <code>gather()</code>, <code>separate()</code> and <code>spread()</code>, we successfully break down the task of cleaning up the messy data into 3 small tasks. In fact, this 3-verb combo is the swiss-army-knife for most of our data munging tasks.</p>
+<pre class="r"><code>messy_dt %&gt;%
+  gather(&quot;key&quot;, &quot;value&quot;, test1_v1:test2_v3) %&gt;%
+  separate(key, into = c(&quot;test&quot;, &quot;visit&quot;)) %&gt;%
+  spread(test, value)</code></pre>
+<pre><code>## # A tibble: 9 x 4
+##      id visit test1 test2
+##   &lt;dbl&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt;
+## 1     1 v1       71    19
+## 2     1 v2       58    74
+## 3     1 v3       16    58
+## 4     2 v1        1    48
+## 5     2 v2       21    81
+## 6     2 v3       13    70
+## 7     3 v1       97    25
+## 8     3 v2       36    46
+## 9     3 v3       62    28</code></pre>
+</div>
+<div id="unite" class="section level2">
+<h2><code>unite()</code></h2>
+<p><code>unite()</code> is the reverse verb of <code>separate()</code>.</p>
+<pre class="r"><code>messy_dt %&gt;%
+  gather(&quot;key&quot;, &quot;value&quot;, test1_v1:test2_v3) %&gt;%
+  separate(key, into = c(&quot;test&quot;, &quot;visit&quot;)) %&gt;%
+  unite(&quot;test_visit&quot;, test, visit)</code></pre>
+<pre><code>## # A tibble: 18 x 3
+##       id test_visit value
+##    &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt;
+##  1     1 test1_v1      71
+##  2     2 test1_v1       1
+##  3     3 test1_v1      97
+##  4     1 test1_v2      58
+##  5     2 test1_v2      21
+##  6     3 test1_v2      36
+##  7     1 test1_v3      16
+##  8     2 test1_v3      13
+##  9     3 test1_v3      62
+## 10     1 test2_v1      19
+## 11     2 test2_v1      48
+## 12     3 test2_v1      25
+## 13     1 test2_v2      74
+## 14     2 test2_v2      81
+## 15     3 test2_v2      46
+## 16     1 test2_v3      58
+## 17     2 test2_v3      70
+## 18     3 test2_v3      28</code></pre>
+</div>
 </div>
 <div id="back-to-index" class="section level1">
 <h1><a href="/">&lt; Back to Index</a></h1>

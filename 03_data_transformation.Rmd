@@ -177,6 +177,27 @@ starwars %>%
   attributes()
 ```
 
+### `bind_rows` and `bind_cols`
+`bind_rows` and `bind_cols` binds data frames together either by rows or columns, as suggested by their names. You can either supply a bunch of tables one by one or as a list.
+
+```{r}
+nrow(starwars)
+nrow(bind_rows(starwars, starwars, starwars))
+# Same
+nrow(bind_rows(list(starwars, starwars, starwars)))
+```
+
+One very useful trick when using `bind_rows` is that if your list is named, you can ask `bind_rows` to generate a new column storing the naming info using the `.id` argument. 
+```{r}
+sw_list <- list(
+  A = starwars,
+  B = starwars, 
+  C = starwars
+)
+long_starways <- bind_rows(sw_list, .id = "new_column")
+long_starways$new_column
+```
+
 ### `join`
 In many cases, we need to merge two data frames. R's native `merge` function works but `dplyr`'s `join` functions are much better. There are 4 join functions that are frequently used: `left_join`, `right_join`, `full_join` and `inner_join`. See [this page](https://stat545.com/bit001_dplyr-cheatsheet.html) for details. 
 
@@ -221,7 +242,7 @@ fluidRow(
 ```
 
 
-(You can find these 5 example tables in the `tidyr` package, which is included in `tidyverse`.)
+(You can find all these 5 example tables in the `tidyr` package, which is included in `tidyverse`.)
 
 In the tidy data paper, Hadley quoted Leo Tolstoy's words "Happy families are all alike; every unhappy family is unhappy in its own way." and commented
 
@@ -257,21 +278,55 @@ messy_dt
 ```
 
 
+## `gather()`
 `gather` collects data from all specified columns (if not specified, all columns) and turned them from columns to rows. Column names go to the "key" column while values go to the "value" column. 
 
 ```{r}
-gather(messy_dt, key = "key", value = "value")
+gather(messy_dt, "key", "value")
 ```
 
-In this example, all the data from the original data frame is arranged in these two columns, `key` & `value`. Both columns are newly generated. The `key` column includes all the previous column names while the `value` column includes all the numbers. However, this is not very helpful in this case because it treats the `id` column as a regular data column while it should have been left outside of the operation. Therefore, we need to instruct `gather` to include the correct variables in the transformation (or to exclude what should not be included). You can do that by putting column names after the `value` argument. You can also choose to put the column names that you don't want after a minus sign. Similar to numeric vectors (Chapter 1), `:` here means "to" in English. `test1_v1:test2_v3` means every column between `test1_v1` and `test2_v3`. 
-
+In this example, all the data from the original data frame is arranged in these two columns, `key` & `value`. Both columns are newly generated. The `key` column includes all the previous column names while the `value` column includes all the numbers. However, this is not very helpful in this case because it treats the `id` column as a regular data column too while it should have been left outside of the operation. In this case, we need to instruct `gather` to include the correct variables in the transformation (or to exclude what should not be included). Here it works in a very similar way as `dplyr::select`. 
 
 ```{r}
-gather(messy_dt, "var", "value", test1_v1:test2_v3)
-# equivalent to
-# gather(messy_dt, "var", "value", -id)
-# gather(messy_dt, "var, "value", test1_v1, test1_v2, test1_v3, test2_v1,
-#        test2_v2, test2_v3)
+gather(messy_dt, "key", "value", test1_v1:test2_v3)
+```
+
+## `separate()`
+In the long dataset we just got in the last step, we have 2 sets of data presenting simultaneously in column `key`. We have to find out a way to `separate` the information. Here comes the `separate()` function. Here to get things mroe literal, we are using the `%>%` pipe symbol. 
+
+```{r}
+messy_dt %>%
+  gather("key", "value", test1_v1:test2_v3) %>%
+  separate(key, into = c("test", "visit"))
+```
+
+The data frame we are getting here is very 'clean' and fits the "tidy data principles" perfectly. This is the so-called "tidy data". This form of data may not be the best form for human readers to consume. However, it is really easy to programatically transform this form of data into any other formats. 
+
+## `spread()`
+`spread()` is the reverse verb of `gather()`. It turns a tall table back to wide based on "key" and "value". By combining `gather()`, `separate()` and `spread()`, we successfully break down the task of cleaning up the messy data into 3 small tasks. In fact, this 3-verb combo is the swiss-army-knife for most of our data munging tasks.
+
+```{r}
+messy_dt %>%
+  gather("key", "value", test1_v1:test2_v3) %>%
+  separate(key, into = c("test", "visit")) %>%
+  spread(test, value)
+```
+
+## `unite()`
+`unite()` is the reverse verb of `separate()`.
+
+```{r}
+messy_dt %>%
+  gather("key", "value", test1_v1:test2_v3) %>%
+  separate(key, into = c("test", "visit")) %>%
+  unite("test_visit", test, visit)
+```
+
+# Using `dplyr` + `tidyr` to solve real problems
+
+In this section, we are going to provide a few examples here demonstrating how to solve some common tasks using `dplyr` and `tidyr`.
+
+```{r}
 ```
 
 
