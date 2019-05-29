@@ -377,6 +377,12 @@ cont_analysis <- dt %>%
 cont_analysis
 ```
 
+You can then put it in a `kable` function to print it out. 
+```{r}
+kable(cont_analysis, caption = "My First Analysis") %>%
+  kable_styling(full_width = F)
+```
+
 ## Categorical Variables
 
 ```{r}
