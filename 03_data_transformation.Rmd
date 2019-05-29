@@ -361,27 +361,86 @@ head(dt)
 ## Continuous Variables
 ```{r}
 cont_analysis <- dt %>%
-  select(id:group, age:bmi)
+  select(id:group, age:bmi)  %>%
+  gather("key", "value", age:bmi) %>%
+  group_by(group, key) %>%
+  summarise(
+    mean = mean(value),
+    sd = sd(value)
+  ) %>%
+  mutate(
+    stat = paste0(round(mean, 1), " (", round(sd, 1), ")")
+  ) %>%
+  select(-(mean:sd)) %>%
+  spread(group, stat)
+
+cont_analysis
 ```
 
 ## Categorical Variables
 
 ```{r}
 cat_analysis <- dt %>%
-  select(id:group, sex, smoking)
+  select(id:group, sex, smoking) %>%
+  gather("key", "value", sex:smoking) %>%
+  group_by(key, value, group) %>%
+  count() %>%
+  ungroup() %>%
+  # Calculate N and percentage
+  group_by(key, group) %>%
+  mutate(
+    N = sum(n),
+    p = round(n/N*100),
+    stat = paste0(p, "% (", n, ")")
+  ) %>%
+  select(key:group, stat) %>%
+  spread(group, stat)
+
+cat_analysis
 ```
 
 ## Longitudinal Variables
 ### Longitudinal Variables by visits
 ```{r}
 long_analysis <- dt %>%
-  select(id:group, v1_gaitspeed:v3_gaitspeed)
+  select(id:group, v1_gaitspeed:v3_gaitspeed) %>%
+  gather("visit", "value", v1_gaitspeed:v3_gaitspeed) %>%
+  # In this case we don't have a second variable other than gaitspeed. 
+  mutate(visit = str_remove(visit, "_gaitspeed")) %>%
+  filter(!is.na(value)) %>%
+  group_by(group, visit) %>%
+  summarise(
+    stat = paste0(
+      round(mean(value), 2), " (",
+      round(sd(value), 2), ")"
+    )
+  ) %>%
+  spread(group, stat)
+long_analysis
 ```
 
 ### Gap Among Longitudinal Variables
+There are 2 ways to calculate gaps. When you only have a few visits, you can just do a column calculation like the one below
 ```{r}
-long_analysis <- dt %>%
-  select(id:group, v1_gaitspeed:v3_gaitspeed)
+gap_analysis <- dt %>%
+  select(id:group, v1_gaitspeed:v3_gaitspeed) %>%
+  mutate(
+    v1_v2_gap = v2_gaitspeed - v1_gaitspeed,
+    v2_v3_gap = v3_gaitspeed - v2_gaitspeed
+  )
+```
+
+However, if you have a number of visits, it's better to let the calculation goes automatically.
+
+```{r}
+gap_analysis <- dt %>%
+  select(id:group, v1_gaitspeed:v3_gaitspeed) %>%
+  gather("key", "value", v1_gaitspeed:v3_gaitspeed) %>%
+  filter(!is.na(value)) %>%
+  group_by(id) %>%
+  mutate(gap = value - lag(value)) %>%
+  arrange(id)
+gap_analysis
 ```
 
 # [< Back to Index](/)
