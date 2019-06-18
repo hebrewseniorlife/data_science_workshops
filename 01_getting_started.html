@@ -9,6 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="Hao Zhu" />
 
 
 <title>Chapter 1 - R Programming Fundamentals</title>
@@ -85,8 +86,6 @@ overflow: auto;
 margin-left: 2%;
 position: fixed;
 border: 1px solid #ccc;
-webkit-border-radius: 6px;
-moz-border-radius: 6px;
 border-radius: 6px;
 }
 
@@ -114,9 +113,14 @@ font-size: 12px;
 .tocify-subheader .tocify-subheader {
 text-indent: 30px;
 }
-
 .tocify-subheader .tocify-subheader .tocify-subheader {
 text-indent: 40px;
+}
+.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
+text-indent: 50px;
+}
+.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
+text-indent: 60px;
 }
 
 .tocify .tocify-item > a, .tocify .nav-list .nav-header {
@@ -520,13 +524,13 @@ float: none;
 
           item.append($("<a/>", {
 
-            "text": self.text()
+            "html": self.html()
 
           }));
 
         } else {
 
-          item.text(self.text());
+          item.html(self.html());
 
         }
 
@@ -1526,8 +1530,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -1565,11 +1567,17 @@ div.tocify {
 
 <h1 class="title toc-ignore">Chapter 1 - R Programming Fundamentals</h1>
 <h3 class="subtitle">Things you should know before you start using R</h3>
-<h4 class="date">2019-04-01 (updated 2019-04-12)</h4>
+<h4 class="author">Hao Zhu</h4>
+<h4 class="date">2019-04-01 (updated 2019-06-17)</h4>
 
 </div>
 
 
+<!--
+If you have any comments, please put them in a pair of HTML commemt symbols,
+like this paragraph.
+
+-->
 <p><a href="/">&lt; Back to Index</a></p>
 <p>This chapter provides an introduction of using R with RStudio. Unlike other tutorials, here, we will not only teach you the “basics” but also give you a deeper explanation of how R works. Some of the points we discuss here may seem a little abstract at first, but they will help you to better understand the contents of the following chapters.</p>
 <div id="rstudio-interface" class="section level1">
@@ -1921,7 +1929,7 @@ system.time({
   }
 })</code></pre>
 <pre><code>##    user  system elapsed 
-##   4.400   0.030   4.434</code></pre>
+##   4.740   0.027   4.778</code></pre>
 <pre class="r"><code># Good practice
 # This practice modifies elements of the same object 50000 times. 
 # The performance is almost linear.

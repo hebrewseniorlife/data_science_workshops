@@ -1,0 +1,198 @@
+---
+title: "Data Visualization using ggplot2 & plotly"
+author: "Hao"
+date: "6/17/2019"
+output: html_document
+---
+
+It is impossible to cover data visualization within one chapter. Here we are only trying to give you a basic demonstration of how to use `ggplot2` & `plotly` to create figures easily in R. Again, this chapter is highly practical. We will show you how to design and make some common figures here but what you need is to learn by doing. Thanks to the rich community of `ggplot2`, you can always find a good support online if you ever run into problems in the future. 
+
+# ggplot2
+## Grammar of Graphics Fundementals
+Let's start with a basic example of using `ggplot2`. This time, we are going to use the `iris` data set. 
+```{r}
+head(iris)
+```
+
+
+```{r, message = F}
+library(tidyverse)
+
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2)
+```
+
+`ggplot` understands graphics in a very artistic way:
+
+> Plot = A canvas + Different layers of visuals
+
+When we are creating a ggplot, we always start with a `ggplot` function, which gives us a canvas. In fact, if you run the `ggplot()` function by its own, you will get a blank plot. 
+
+```{r}
+ggplot()
+```
+
+Layers of visuals in `ggplot2` are called `geom`. The `geom` provides some pre-defined rules on how the points, lines or shapes should be drawn. For example, the `geom_point()` function we used previously contains instructions of how to draw a layer of points, which basically tells R that you want to use your data to draw a scatter plot. As far as today, there are `r length(grep("^geom_", ls("package:ggplot2"), value = T))` pre-defined geoms available in `ggplot2` for you to choose. In most cases, these geom can cover most of what you need and satisfy most of your imagination. If you need more, there are plenty of `ggplot2` extension packages online. Some of them do provide additional geoms. You can find a list of these extension package on this website: [https://www.ggplot2-exts.org](https://www.ggplot2-exts.org)
+
+Geoms in base ggplot2:
+```{r, echo=FALSE}
+grep("^geom_", ls("package:ggplot2"), value = T)
+```
+
+You can add multiple layers of geoms into the same plot. In the example below, we are adding a semi-transparent path line on top of the points layer. Note that, the path geom also uses the "data" and x-y definitions we defined in the `ggplot()` function. 
+```{r}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2) + 
+  geom_path(alpha = 0.4)
+```
+
+
+You can also get some hints on which geom to use by checking out the `ggplot2` cheatsheet. You can find one here:
+
+![https://github.com/rstudio/cheatsheets/blob/master/data-visualization-2.1.pdf](images/data-visualization-2.1.png)
+
+It is also critically important to understand where to put "variables" here. Let's take a look at example 1 again. There are 3 kinds of variables here: 
+
+- **data**: The first variable in `ggplot()` or inside `data = ` in any `geoms`.
+- **variable aesthetics**: Variables defined within `aes()`
+- **constant aesthetics**: variables defined outside `aes()` 
+
+```{r}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2)
+```
+
+The `data` and `aes()` defined in `ggplot()` globally affects the entire "canvas". You can also define them locally within each `geom`. This is especially helpful if you want to add a layer of data, which was not included in the orginal dataset. 
+
+```{r, eval = F}
+# The previous example can be rewritten as below.
+ggplot() +
+  geom_point(data = iris, aes(x = Sepal.Length, y = Petal.Length, color = Species), 
+             shape = 2)
+```
+
+## Scale
+In previous examples, we have used the `aes()` function to assign data into several aesthetic aspects, such as the x & y axis. Common aesthetic variable include:
+
+- x
+- y
+- color/colour
+- fill
+- alpha
+- size
+- linetype
+- shape
+
+The default settings in `ggplot` works in certain ways but we always want to be able to customize these settings. In fact, these aesthetic aspects can then be further customized using the family of `scale` function. Here we listed out all scale functions in base ggplot2:
+
+```{r, echo=FALSE}
+grep("^scale_", ls("package:ggplot2"), value = T)
+```
+
+You can simply "add" these scale functions into your ggplot calls. 
+```{r}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2) + 
+  geom_path(alpha = 0.4) +
+  scale_x_log10() + # log transformation for x axis
+  scale_y_reverse() + # reverse y axis
+  scale_color_viridis_d() # viridis color makes plots look scientific. 
+                          # _d means discrete. _c means continuous.
+```
+
+## Coorinate
+Although `scale` can modify axes, these modifications belongs to the individual axis. If what you want to change is something beyond that, for example, the relationship/layout between the axes, you need to use the `coord_` coordinate function family.
+
+For example, `coord_polar()` will squeeze the axes and transform the plot into a radar plot whereas `coord_fixed()` will force the two axes to use the same scale to show their 1:1 (or customized) relationship. What I find most useful is the `coord_flip()` function, which can flip the x-y axis. This is really helpful when you make a forest plot. 
+
+```{r}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2) + 
+  geom_path(alpha = 0.4) +
+  scale_color_viridis_d() +
+  coord_polar()
+```
+
+```{r}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2) + 
+  geom_path(alpha = 0.4) +
+  scale_color_viridis_d() +
+  coord_fixed()
+```
+
+```{r}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2) + 
+  geom_path(alpha = 0.4) +
+  scale_color_viridis_d() +
+  coord_flip()
+```
+
+## Facets
+Facets in ggplots refers to multiple subpanels of the "same" plot. It can be done through the `facet_grid()` (2D) or `face_wrap()` (1D) functions. 
+
+```{r}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2) + 
+  geom_path(alpha = 0.4) +
+  scale_color_viridis_d() +
+  facet_wrap(~Species)
+```
+
+## Theme
+### `theme_` family
+Theme in `ggplot` controls how the plot will look in general, such as the color of the panel and the font of the axis. `ggplot2` comes with a few pre-defined themes. You can access them through the `theme_` prefix. For example, `theme_minimal` will remove the gray background and borders from the default of ggplot2. 
+
+```{r}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2) + 
+  geom_path(alpha = 0.4) +
+  scale_color_viridis_d() +
+  theme_minimal()
+```
+
+Here at Markus Institute, we also spent some time and developed this `razor` theme.
+
+```{r}
+library(ggrazor)
+
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(shape = 2) + 
+  geom_path(alpha = 0.4) +
+  scale_color_viridis_d() +
+  theme_razor() +
+  # you can add additional stuff to make it look better.
+  theme(axis.line = element_blank()) +
+  ggthemes::geom_rangeframe(data = data.frame(x = c(4, 8), y = c(2, 6)),
+                            aes(x, y), color = "#7F7F7F", show.legend = F)
+```
+
+### `theme()` function
+If you are looking into customizing the theme in details, which we usually do, you need this theme function. Here is a reference page of what you can do but in most cases, you can find what you need via auto-complete in RStudio. 
+
+[https://ggplot2.tidyverse.org/reference/ggtheme.html](https://ggplot2.tidyverse.org/reference/ggtheme.html)
+
+## Position dodge/jitter
+Most `geom`s come with a position argument. You can adjust the position of the points/bars a little so that they are not over lapping. However, dodge/jitter do not only help you get away with overlapping points, they can also help you make culstered plots. 
+
+```{r}
+iris_sum <- iris %>%
+  gather("key", "value", -Species) %>%
+  group_by(Species, key) %>%
+  summarise(mean = mean(value),
+            sd = sd(value)) %>%
+  mutate(low = mean - 1.96 * sd, high = mean + 1.96 * sd)
+head(iris_sum)
+```
+
+```{r}
+ggplot(iris_sum, aes(x = Species, y = mean, ymin = low, ymax = high,
+                     color = key)) +
+  geom_pointrange(position = position_dodge(0.5)) +
+  geom_text(aes(label = key), 
+            position = position_dodge(0.5), vjust = 1.5) +
+  coord_flip() +
+  theme(legend.position = "none") +
+  theme_minimal()
+```
