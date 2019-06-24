@@ -1,6 +1,6 @@
 ---
 title: "Data Visualization using ggplot2 & plotly"
-author: "Hao"
+author: "Hao Zhu"
 date: "6/17/2019"
 output: html_document
 ---
@@ -239,7 +239,7 @@ plot_grid(p1, p2, labels = c("A)", "B)"))
 `ggplot2` comes with an `ggsave` function, which makes it really easy to save the plots you generated into png, jpg, tiff, pdf, svg, & etc. By default, it will save the last plot but you can choose to save any saved ggplot. 
 
 ```{r, eval = F}
-ggsave("myplot.pdf")
+ggsave("myplot.png", width = 9, height = 5, units = "inch", dpi = 300)
 ```
 
 ## Common Figures
@@ -250,8 +250,26 @@ ggplot(iris_sum, aes(x = Species, y = mean)) +
   geom_bar(aes(fill = key), stat = "identity", position = "dodge") +
   geom_errorbar(aes(ymin = low, ymax = high, group = key),
                 position = position_dodge(0.9), width = 0.3) +
+  geom_text(aes(label = round(mean, 1), group = key), 
+            position = position_dodge(0.9), vjust = -0.1, hjust = -0.1) +
   scale_fill_brewer(palette="OrRd") +
   labs(x = NULL, y = "Length") +
   theme(legend.position = "bottom")
 ```
 
+### Forest Plot
+```{r}
+iris_sum2 <- iris_sum %>%
+  mutate(name = paste(Species, key, sep = "."))
+
+ggplot(iris_sum2, aes(x = name, y = mean, ymin = low, ymax = high)) +
+  geom_pointrange() +
+  geom_hline(yintercept = 0, linetype = 2) +
+  coord_flip() +
+  labs(x = NULL, y = NULL) +
+  theme_classic() +
+  theme(
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+```

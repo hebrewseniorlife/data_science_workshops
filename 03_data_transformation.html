@@ -9,6 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="Hao Zhu" />
 
 
 <title>Chapter 3 - Data Transformation using Tidyverse</title>
@@ -1575,7 +1576,8 @@ div.tocify {
 
 <h1 class="title toc-ignore">Chapter 3 - Data Transformation using Tidyverse</h1>
 <h3 class="subtitle">Mutate, Summarize, Gather &amp; Spread - Time for some R magic spells</h3>
-<h4 class="date">2019-04-05 (updated 2019-05-29)</h4>
+<h4 class="author">Hao Zhu</h4>
+<h4 class="date">2019-04-05 (updated 2019-06-24)</h4>
 
 </div>
 
@@ -2259,9 +2261,9 @@ messy_dt</code></pre>
 <pre><code>## # A tibble: 3 x 7
 ##      id test1_v1 test1_v2 test1_v3 test2_v1 test2_v2 test2_v3
 ##   &lt;dbl&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;
-## 1     1       57       91       21       23       71       48
-## 2     2       92        5      100       32        5       27
-## 3     3       96       74       61       97       38       26</code></pre>
+## 1     1       18        3       70       50       47       41
+## 2     2       61       78       30       20       46       91
+## 3     3       64       87       69        6       93       14</code></pre>
 <div id="gather" class="section level2">
 <h2><code>gather()</code></h2>
 <p><code>gather</code> collects data from all specified columns (if not specified, all columns) and turned them from columns to rows. Column names go to the “key” column while values go to the “value” column.</p>
@@ -2272,37 +2274,37 @@ messy_dt</code></pre>
 ##  1 id           1
 ##  2 id           2
 ##  3 id           3
-##  4 test1_v1    57
-##  5 test1_v1    92
-##  6 test1_v1    96
-##  7 test1_v2    91
-##  8 test1_v2     5
-##  9 test1_v2    74
-## 10 test1_v3    21
+##  4 test1_v1    18
+##  5 test1_v1    61
+##  6 test1_v1    64
+##  7 test1_v2     3
+##  8 test1_v2    78
+##  9 test1_v2    87
+## 10 test1_v3    70
 ## # … with 11 more rows</code></pre>
 <p>In this example, all the data from the original data frame is arranged in these two columns, <code>key</code> &amp; <code>value</code>. Both columns are newly generated. The <code>key</code> column includes all the previous column names while the <code>value</code> column includes all the numbers. However, this is not very helpful in this case because it treats the <code>id</code> column as a regular data column too while it should have been left outside of the operation. In this case, we need to instruct <code>gather</code> to include the correct variables in the transformation (or to exclude what should not be included). Here it works in a very similar way as <code>dplyr::select</code>.</p>
 <pre class="r"><code>gather(messy_dt, &quot;key&quot;, &quot;value&quot;, test1_v1:test2_v3)</code></pre>
 <pre><code>## # A tibble: 18 x 3
 ##       id key      value
 ##    &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
-##  1     1 test1_v1    57
-##  2     2 test1_v1    92
-##  3     3 test1_v1    96
-##  4     1 test1_v2    91
-##  5     2 test1_v2     5
-##  6     3 test1_v2    74
-##  7     1 test1_v3    21
-##  8     2 test1_v3   100
-##  9     3 test1_v3    61
-## 10     1 test2_v1    23
-## 11     2 test2_v1    32
-## 12     3 test2_v1    97
-## 13     1 test2_v2    71
-## 14     2 test2_v2     5
-## 15     3 test2_v2    38
-## 16     1 test2_v3    48
-## 17     2 test2_v3    27
-## 18     3 test2_v3    26</code></pre>
+##  1     1 test1_v1    18
+##  2     2 test1_v1    61
+##  3     3 test1_v1    64
+##  4     1 test1_v2     3
+##  5     2 test1_v2    78
+##  6     3 test1_v2    87
+##  7     1 test1_v3    70
+##  8     2 test1_v3    30
+##  9     3 test1_v3    69
+## 10     1 test2_v1    50
+## 11     2 test2_v1    20
+## 12     3 test2_v1     6
+## 13     1 test2_v2    47
+## 14     2 test2_v2    46
+## 15     3 test2_v2    93
+## 16     1 test2_v3    41
+## 17     2 test2_v3    91
+## 18     3 test2_v3    14</code></pre>
 </div>
 <div id="separate" class="section level2">
 <h2><code>separate()</code></h2>
@@ -2313,24 +2315,24 @@ messy_dt</code></pre>
 <pre><code>## # A tibble: 18 x 4
 ##       id test  visit value
 ##    &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt;
-##  1     1 test1 v1       57
-##  2     2 test1 v1       92
-##  3     3 test1 v1       96
-##  4     1 test1 v2       91
-##  5     2 test1 v2        5
-##  6     3 test1 v2       74
-##  7     1 test1 v3       21
-##  8     2 test1 v3      100
-##  9     3 test1 v3       61
-## 10     1 test2 v1       23
-## 11     2 test2 v1       32
-## 12     3 test2 v1       97
-## 13     1 test2 v2       71
-## 14     2 test2 v2        5
-## 15     3 test2 v2       38
-## 16     1 test2 v3       48
-## 17     2 test2 v3       27
-## 18     3 test2 v3       26</code></pre>
+##  1     1 test1 v1       18
+##  2     2 test1 v1       61
+##  3     3 test1 v1       64
+##  4     1 test1 v2        3
+##  5     2 test1 v2       78
+##  6     3 test1 v2       87
+##  7     1 test1 v3       70
+##  8     2 test1 v3       30
+##  9     3 test1 v3       69
+## 10     1 test2 v1       50
+## 11     2 test2 v1       20
+## 12     3 test2 v1        6
+## 13     1 test2 v2       47
+## 14     2 test2 v2       46
+## 15     3 test2 v2       93
+## 16     1 test2 v3       41
+## 17     2 test2 v3       91
+## 18     3 test2 v3       14</code></pre>
 <p>The data frame we are getting here is very ‘clean’ and fits the “tidy data principles” perfectly. This is the so-called “tidy data”. This form of data may not be the best form for human readers to consume. However, it is really easy to programatically transform this form of data into any other formats.</p>
 </div>
 <div id="spread" class="section level2">
@@ -2343,15 +2345,15 @@ messy_dt</code></pre>
 <pre><code>## # A tibble: 9 x 4
 ##      id visit test1 test2
 ##   &lt;dbl&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt;
-## 1     1 v1       57    23
-## 2     1 v2       91    71
-## 3     1 v3       21    48
-## 4     2 v1       92    32
-## 5     2 v2        5     5
-## 6     2 v3      100    27
-## 7     3 v1       96    97
-## 8     3 v2       74    38
-## 9     3 v3       61    26</code></pre>
+## 1     1 v1       18    50
+## 2     1 v2        3    47
+## 3     1 v3       70    41
+## 4     2 v1       61    20
+## 5     2 v2       78    46
+## 6     2 v3       30    91
+## 7     3 v1       64     6
+## 8     3 v2       87    93
+## 9     3 v3       69    14</code></pre>
 </div>
 <div id="unite" class="section level2">
 <h2><code>unite()</code></h2>
@@ -2363,24 +2365,24 @@ messy_dt</code></pre>
 <pre><code>## # A tibble: 18 x 3
 ##       id test_visit value
 ##    &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt;
-##  1     1 test1_v1      57
-##  2     2 test1_v1      92
-##  3     3 test1_v1      96
-##  4     1 test1_v2      91
-##  5     2 test1_v2       5
-##  6     3 test1_v2      74
-##  7     1 test1_v3      21
-##  8     2 test1_v3     100
-##  9     3 test1_v3      61
-## 10     1 test2_v1      23
-## 11     2 test2_v1      32
-## 12     3 test2_v1      97
-## 13     1 test2_v2      71
-## 14     2 test2_v2       5
-## 15     3 test2_v2      38
-## 16     1 test2_v3      48
-## 17     2 test2_v3      27
-## 18     3 test2_v3      26</code></pre>
+##  1     1 test1_v1      18
+##  2     2 test1_v1      61
+##  3     3 test1_v1      64
+##  4     1 test1_v2       3
+##  5     2 test1_v2      78
+##  6     3 test1_v2      87
+##  7     1 test1_v3      70
+##  8     2 test1_v3      30
+##  9     3 test1_v3      69
+## 10     1 test2_v1      50
+## 11     2 test2_v1      20
+## 12     3 test2_v1       6
+## 13     1 test2_v2      47
+## 14     2 test2_v2      46
+## 15     3 test2_v2      93
+## 16     1 test2_v3      41
+## 17     2 test2_v3      91
+## 18     3 test2_v3      14</code></pre>
 </div>
 </div>
 <div id="using-dplyr-tidyr-to-solve-real-problems-live-coding" class="section level1">
@@ -2412,12 +2414,12 @@ dt &lt;- tibble(
 <pre><code>## # A tibble: 6 x 9
 ##      id group   age   bmi sex   smoking v1_gaitspeed v2_gaitspeed
 ##   &lt;int&gt; &lt;chr&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;lgl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
-## 1     1 A        80  27.0 Male  FALSE          1.06         1.27 
-## 2     2 B        51  35.1 Male  FALSE          0.759        1.17 
-## 3     3 A        54  30.7 Male  FALSE          0.894        0.571
-## 4     4 A        79  32.8 Fema… FALSE         NA            0.722
-## 5     5 A        60  30.1 Fema… FALSE          0.924        1.36 
-## 6     6 A        78  25.0 Fema… FALSE          1.03         1.13 
+## 1     1 B        53  33.4 Male  FALSE          1.36         0.951
+## 2     2 B        54  33.7 Fema… FALSE         NA            1.20 
+## 3     3 A        63  28.7 Male  FALSE          0.917        1.31 
+## 4     4 B        57  27.9 Fema… FALSE          0.766        1.04 
+## 5     5 B        63  22.5 Male  FALSE          1.00         1.49 
+## 6     6 B        63  23.0 Fema… FALSE          0.803        1.14 
 ## # … with 1 more variable: v3_gaitspeed &lt;dbl&gt;</code></pre>
 <div id="continuous-variables" class="section level2">
 <h2>Continuous Variables</h2>
@@ -2437,10 +2439,10 @@ dt &lt;- tibble(
 
 cont_analysis</code></pre>
 <pre><code>## # A tibble: 2 x 3
-##   key   A           B          
-##   &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;      
-## 1 age   67.6 (11.3) 66.6 (11.4)
-## 2 bmi   28.8 (3.3)  29.1 (2.8)</code></pre>
+##   key   A           B         
+##   &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;     
+## 1 age   67.7 (10.5) 66.7 (10) 
+## 2 bmi   29.5 (3.1)  28.6 (3.7)</code></pre>
 <p>You can then put it in a <code>kable</code> function to print it out.</p>
 <pre class="r"><code>kable(cont_analysis, caption = &quot;My First Analysis&quot;) %&gt;%
   kable_styling(full_width = F)</code></pre>
@@ -2467,10 +2469,10 @@ B
 age
 </td>
 <td style="text-align:left;">
-67.6 (11.3)
+67.7 (10.5)
 </td>
 <td style="text-align:left;">
-66.6 (11.4)
+66.7 (10)
 </td>
 </tr>
 <tr>
@@ -2478,10 +2480,10 @@ age
 bmi
 </td>
 <td style="text-align:left;">
-28.8 (3.3)
+29.5 (3.1)
 </td>
 <td style="text-align:left;">
-29.1 (2.8)
+28.6 (3.7)
 </td>
 </tr>
 </tbody>
@@ -2510,10 +2512,10 @@ cat_analysis</code></pre>
 ## # Groups:   key [2]
 ##   key     value  A        B       
 ##   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   
-## 1 sex     Female 51% (22) 51% (29)
-## 2 sex     Male   49% (21) 49% (28)
-## 3 smoking FALSE  88% (38) 95% (54)
-## 4 smoking TRUE   12% (5)  5% (3)</code></pre>
+## 1 sex     Female 43% (26) 44% (17)
+## 2 sex     Male   57% (35) 56% (22)
+## 3 smoking FALSE  95% (58) 90% (35)
+## 4 smoking TRUE   5% (3)   10% (4)</code></pre>
 </div>
 <div id="longitudinal-variables" class="section level2">
 <h2>Longitudinal Variables</h2>
@@ -2537,9 +2539,9 @@ long_analysis</code></pre>
 <pre><code>## # A tibble: 3 x 3
 ##   visit A           B          
 ##   &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;      
-## 1 v1    0.9 (0.2)   0.9 (0.2)  
-## 2 v2    0.96 (0.25) 1.04 (0.24)
-## 3 v3    1.08 (0.33) 1.14 (0.27)</code></pre>
+## 1 v1    0.89 (0.15) 0.94 (0.19)
+## 2 v2    1.05 (0.24) 1 (0.25)   
+## 3 v3    1.04 (0.28) 1.02 (0.31)</code></pre>
 </div>
 <div id="gap-among-longitudinal-variables" class="section level3">
 <h3>Gap Among Longitudinal Variables</h3>
@@ -2559,21 +2561,21 @@ long_analysis</code></pre>
   mutate(gap = value - lag(value)) %&gt;%
   arrange(id)
 gap_analysis</code></pre>
-<pre><code>## # A tibble: 266 x 5
+<pre><code>## # A tibble: 271 x 5
 ## # Groups:   id [100]
-##       id group key          value    gap
-##    &lt;int&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1 A     v1_gaitspeed 1.06  NA    
-##  2     1 A     v2_gaitspeed 1.27   0.205
-##  3     2 B     v1_gaitspeed 0.759 NA    
-##  4     2 B     v2_gaitspeed 1.17   0.410
-##  5     2 B     v3_gaitspeed 1.46   0.289
-##  6     3 A     v1_gaitspeed 0.894 NA    
-##  7     3 A     v2_gaitspeed 0.571 -0.322
-##  8     3 A     v3_gaitspeed 0.924  0.353
-##  9     4 A     v2_gaitspeed 0.722 NA    
-## 10     4 A     v3_gaitspeed 1.28   0.562
-## # … with 256 more rows</code></pre>
+##       id group key          value     gap
+##    &lt;int&gt; &lt;chr&gt; &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt;
+##  1     1 B     v1_gaitspeed 1.36  NA     
+##  2     1 B     v2_gaitspeed 0.951 -0.408 
+##  3     1 B     v3_gaitspeed 0.976  0.0246
+##  4     2 B     v2_gaitspeed 1.20  NA     
+##  5     2 B     v3_gaitspeed 0.548 -0.657 
+##  6     3 A     v1_gaitspeed 0.917 NA     
+##  7     3 A     v2_gaitspeed 1.31   0.397 
+##  8     3 A     v3_gaitspeed 1.44   0.126 
+##  9     4 B     v1_gaitspeed 0.766 NA     
+## 10     4 B     v2_gaitspeed 1.04   0.269 
+## # … with 261 more rows</code></pre>
 </div>
 </div>
 </div>
