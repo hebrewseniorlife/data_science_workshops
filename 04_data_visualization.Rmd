@@ -1,8 +1,15 @@
 ---
 title: "Data Visualization using ggplot2 & plotly"
 author: "Hao Zhu"
-date: "6/17/2019"
-output: html_document
+date: "2019-06-17 (updated `r Sys.Date()`)"
+output: 
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
 ---
 
 It is impossible to cover all of data visualization within one chapter. Here, we provide a basic demonstration of how to use `ggplot2` & `plotly` to create figures easily in R. We will show you how to design and create some common figures, but what you need is to learn by doing. Thanks to the rich community of `ggplot2`, you can always find good support online if you ever run into problems in the future. 

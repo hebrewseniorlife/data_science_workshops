@@ -1,0 +1,208 @@
+---
+title: "Modeling"
+author: "Hao Zhu"
+date: "2019-06-24 (updated `r Sys.Date()`)"
+output: 
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+---
+
+There are hundreds of models that you can create in R. It is impossible (and also unnecessary) to cover them all in one chapter. Here we are going to focus on the big picture. We will talk about how to create statistical models in R in most cases, how to get summary out of the models and how to get your data ready for the models (imputation & scaling). We will also give you a brief example of using `keras` to do machine learning on RStudio Server. 
+
+# Getting Started
+Let's start with a basic linear model. In R, most of common statistical models can be accessed through a designated model function. In this case, we use `lm()` to construct a basic linear model. We need to feed in at least two pieces of information - data & formula. Formula in `lm()` and most of modeling functions in R takes the format of 
+
+> y ~ x1 + x2 + ...
+
+where on the left side of `~` sits the outcome and all the predictors sit on the right side. 
+
+```{r}
+fit <- lm(mpg ~ wt + hp, data = mtcars)
+fit
+```
+
+What you are getting here is a "model" object that contains all the necessary information. Although the information printed out here may seem to be quite simple, the model itself is actually more complicated than you thought. Here is a screenshot of part of the actual model object. 
+
+![Part of the lm() model](images/lm_model.png)
+
+Since the models are usually complicated, in base R, we usually use the function`summary` and `anova` to print out a summary and analysis of variance table of the resutls. If you want to use the model to do some predication, you can use the `predict()` function to apply this model on new data.
+
+```{r}
+summary(fit)
+anova(fit)
+```
+
+```{r}
+new_cars <- data.frame(
+  wt = c(1.256, 2.378),
+  hp = c(100, 200)
+)
+
+predict(fit, new_cars)
+```
+
+In fact, these functions, `summary()`, `anova()` & `predict()` are programmed in a way that they will react differently depending on the class of the input object. Therefore, function `summary()` will provide different insights to different types of models. This type of function is usually called `S3` functions/methods, which is one of R's simplified [object-oriented (OO)](https://en.wikipedia.org/wiki/Object-oriented_programming) programming style. 
+
+For these type of functions, if you need to search for help, you need to search for things like `summary.lm`. That is the actual help file you should look at. The documentation of `summary` usually won't give you what you need. 
+
+Let's get back to modeling. Base R `summary()` is great but the output it generated is not in a table format. It works in the past when statisticians got used to rewrite the information in Word by hand but nowadays, when many people like to use R Markdown to generate automated reports, it creates some issues. Therefore, deeply influenced by the `tidyverse`, the `broom` package comes with a pack of tools to extract the information from models into a table. This task may sound easy but thinking about the number of different models we have in R, it is a lot of efforts trying to standardize all these models into the same format. 
+
+```{r, message=F}
+library(broom)
+
+tidy(fit, conf.int = T)
+```
+
+`broom` also comes with 2 other verbs: `glance()` and `augment()`. The prior one provides a table of summary of goodness of fit measures. The later one provides how individual data points contributes to the model.
+
+```{r}
+glance(fit)
+```
+
+```{r}
+augment(fit)
+```
+
+# Model Construction Pipeline
+## Running multiple models in one pipe
+The `purrr` package in `tidyverse` is super useful when you want to run multiple models in one run. It was originally provided as a standardized tool to perform vectorized operations in R, which covers vectors and lists. 
+```{r, message=F}
+library(tidyverse)
+mtcars_purrr <- mtcars %>%
+  gather("key", "value", -mpg) %>%
+  group_nest(key) %>%
+  mutate(
+    data = map(data, ~broom::tidy(lm(mpg ~ value, data = .x), conf.int = T))
+  ) %>%
+  unnest()
+
+mtcars_purrr
+```
+
+## Imputation
+When you have missing values in your modeling data, imputation is a good strategy to keep your sample size and on some aspects, reduce the amount of bias created by removing the values. 
+
+There are a number of different imputation strategy. Basic ones include mean/mode/median imputation. KNN can also be used to perform nearest neighbors imputation. For this kind of simple imputation, the [recipes](https://github.com/tidymodels/recipes) might be able to speed up the process a lot. 
+```{r}
+mtcars_mis <- mtcars
+mtcars_mis$wt[sample(nrow(mtcars), 6)] <- NA
+mtcars_mis$hp[sample(nrow(mtcars), 6)] <- NA
+
+sum(is.na(mtcars_mis$wt))
+```
+
+```{r, message=F}
+library(recipes)
+recipe(mpg ~ wt + hp, data = mtcars_mis) %>%
+  step_meanimpute(all_predictors()) %>%
+  prep() %>%
+  juice()
+```
+
+You can also choose to do multiple imputation (MI) via the [`mice`](https://github.com/stefvanbuuren/mice) package. 
+
+```{r}
+library(mice)
+
+# you can specify the number of multiple imputations using m.
+imputed_mtcars <- mice(mtcars_mis, m = 6, method = "pmm")
+
+# and call out the 1st set of imputation in complete. 
+mice::complete(imputed_mtcars, 1)
+```
+
+You can also try to use the `purrr` skills you just learnt to construct a separate model for each generated MI. 
+
+```{r}
+map(1:6, ~ mice::complete(imputed_mtcars, .x)) %>%
+  map_df(~ broom::tidy(lm(mpg ~ wt + hp, data = .x)))
+```
+
+## Scale
+Sometime we have predictors at totally different scales, it might be a good idea to scale them up before sending them directly into the model. In this way, we can make sure different factors can be weighted on the same level when the model gets constructed. Again, the `recipes` package can be very helpful here. 
+
+```{r}
+scale_recipe <- recipe(mpg ~ wt + hp, data = mtcars) %>%
+  step_center(all_predictors()) %>%
+  step_scale(all_predictors()) %>%
+  prep() 
+
+juice(scale_recipe)
+```
+
+## Visualization
+The most common techinique for visualizing models are forest plots, which are basically rotated point-and-error-bar plot. Here we will use the data from the multiple univariate `lm()` models we created in the `purrr` example above.
+
+```{r}
+mtcars_purrr %>%
+  # remove all the "intercept" items and keep only those slopes. 
+  filter(term == "value") %>%
+  ggplot(aes(x = key, y = estimate, ymin = conf.low, ymax = conf.high)) +
+  geom_pointrange() +
+  coord_flip()
+```
+
+# Common Statistical models
+## GLM
+### linear regression
+```{r}
+glm_fit <- glm(mpg ~ wt + hp, data = mtcars)
+broom::tidy(glm_fit)
+```
+
+### Binomial logistical regression
+Note that for logistical and multinomial models, you need to exponentiate the beta coefficients to get the odds ratios. If you are using base R's summary and other things, you need to run `exp()` by yourself. If you are using `broom::tidy()`, you need to put `exponentiate = T` in your `tidy` function. A typical rule of thumb is that if you use `log` or `logit` in your link function (for example, here the `binomial(link = "logit")` is our link function), you need to exponentiate your coefficient. 
+
+```{r}
+glm_bino <- glm(vs ~ wt + hp, data = mtcars, family = binomial(link = "logit"))
+
+tidy(glm_bino, exponentiate = T)
+```
+
+### Poisson logistical regression
+It's very similar to run a Poisson logistical regression. 
+
+```{r}
+poisson_dt <- data.frame(
+  count = sample(100, 10),
+  a = rnorm(10),
+  b = rnorm(10)
+)
+poisson_glm <- glm(count ~ a + b, data = poisson_dt, family = poisson(link = "log"))
+
+tidy(poisson_glm, exponentiate = T, conf.int = T)
+```
+
+## Mixed Effect
+For all mixed effect models, we usually use the `lme()` function from `library(nlme)`
+
+```{r, message=F}
+library(nlme)
+
+exer <- read_csv("https://stats.idre.ucla.edu/stat/data/exer.csv")
+exer <- exer %>%
+  mutate(
+    id = factor(id),
+    diet = factor(diet),
+    exertype = factor(exertype),
+    time = factor(time)
+  )
+
+head(exer)
+
+mixed_effect_fit <- lme(
+  pulse ~ diet + exertype,
+  random = ~ 1 | id / time,
+  data = exer
+)
+
+summary(mixed_effect_fit)
+```
+
+## Survival Analysis
+You can learn more about survival analysis in R from this blog post: https://rviews.rstudio.com/2017/09/25/survival-analysis-with-r/. In addition to what mentioned in this post, the [survminer](https://cran.r-project.org/web/packages/survminer/vignettes/Informative_Survival_Plots.html) package is another great tool to use for survival analysis. 
