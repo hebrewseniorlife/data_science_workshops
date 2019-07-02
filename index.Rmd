@@ -12,7 +12,7 @@ This site includes materials for the Data Science with R Workshop Series hosted 
 - [Chapter 2 - Read Data into R](02_data_io.html)
 - [Chapter 3 - Data Transformation using Tidyverse](03_data_transformation.html)
 - [Chapter 4 - Data Visualization using ggplot2 & plotly](04_data_visualization.html)
-- Chapter 5 - Statistical Models in R
+- [Chapter 5 - Statistical Models in R](05_modeling.html)
 - Chapter 6 - Tabular Visualization using kableExtra
 - Chapter 7 - Assembling Everything in R Markdown Reports
 - Chapter 8 - Creating Interactive Web Apps using R Shiny
