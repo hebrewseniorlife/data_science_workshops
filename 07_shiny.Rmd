@@ -1,0 +1,15 @@
+---
+title: "Introduction to Shiny"
+author: "Hao Zhu"
+date: "2019-08-12 (updated `r Sys.Date()`)"
+output: 
+  html_document:
+    theme: cosmo
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+---
+
+TBW
