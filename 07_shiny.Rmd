@@ -12,4 +12,8 @@ output:
       print: false
 ---
 
-TBW
+`Shiny` provides an easy to use web framework in R so that R users can start to create web apps. Before we get started, there are a few web-related concepts we need to clarify. 
+
+# Web 101
+## Static web page v.s. Dynamic website
+It may not be very obvious at the very begining but in most cases, websites can be categorized into 2 types: static & dynamic. Static websites are made of by many static web pages and are hosted by very simple web servers. The web server won't need to do any calculation, searching and database interaction. Their only job is to be the home for pre-generated web pages. Example includes personal blogs and project sites. The dynamic websites, 
