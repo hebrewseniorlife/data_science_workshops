@@ -41,3 +41,5 @@ server <- function(input, output, session) {
 shinyApp(ui = ui, server = server)
 
 ```
+
+For now, we did the rest part of this workshop in live teaching. A more detailed example will provided here in the future.
