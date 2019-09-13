@@ -12,30 +12,48 @@ output:
       print: false
 ---
 
-There are hundreds of statistical models that you can create in R. It is impossible (and also unnecessary) to cover them all in one chapter. Here, we are going to focus on the big picture. We will talk about the syntax for creating commonly used statistical models in R, how to easily summarize the results of the model and preparing your data for use in the models (imputation & scaling). 
+# Terminology
+In the statistical jargon, the final result you want to predict is your outcome/output and the information you will use to generate the prediction is called predictor/input. If your outcome is a categorical variable, you are trying to classify your **new inputs** into different levels. We call this process classification. If your outcome is continuous (basically a number), we will use the regression methods to create the model.
 
-# Getting Started
-Let's start with a basic linear model. In R, most common statistical models can be accessed through a designated model function. In this case, we use `lm()` to construct a basic linear model. We need to provide the function with at least two pieces of information: the data and a formula. Formula in `lm()` and most of modeling functions in R takes the format of 
+# Getting Started with Modeling
+As a language with a 30-year history, the modeling part of R supports several different kinds of inputing format and may confuse some newcomers. Here we are going to introduce you how to state a model with **data** and **formula**, which is the most standard way of making a model in R.
+
+Let's start with a simple Student's t-Test. To do that, we have a `t.test` function in R. Such function is called a model function. It creates a specific class of object, which is usually a list to the end, to store every aspect of the model. As we said before, one way of using it is to provide data to this function and provide a fomula you want to use. Formula in R is a special kind of notation and it takes for form of
 
 > y ~ x1 + x2 + ...
 
 such that on the left side of `~` sits the outcome variable, while the predictors are on the right side. 
 
 ```{r}
-fit <- lm(mpg ~ wt + hp, data = mtcars)
+t.test(mpg ~ am, data = mtcars)
+```
+
+Here you can see the T test function gives you the T score (number of standard deviation from mean) and p-value. 
+
+# Linear Regression
+Following the traditional statistical workflow, after you get results from initial statistical testing (you don't have to do this step),  you can move towards creating some models. If you have continuous outcome and you assume you are going to see a linear relationship in your data, you could use the `lm()` function to create some linear regression model. 
+
+```{r}
+fit <- lm(mpg ~ wt, data = mtcars)
 fit
 ```
 
-Here, we are saving the results of 'lm()' to the object, "fit".  "fit" is a "model" object that contains all the information created by the 'lm()' function. Although the information printed out here may seem to be quite simple, the model itself is actually more complicated than you thought. Here is a screenshot of part of the actual model object. 
+The direct results coming from the model only tells us the minimal information. What about the confidence interval or p value? How can we get there?
 
-![Part of the lm() model](images/lm_model.png)
-
-Since the models are usually complicated, in base R, we can use the function `summary` and `anova` to print out a summary and analysis of variance table of the results. If you want to use the model to do some prediction, you can use the `predict()` function to apply this model to new data.
-
+The fact is that the results from a real model function is an complicated object. In addition, you are expected to use this model in a lot of different ways including doing prediction. All of these actions should not and could not happen at the moment of calculation. Therefore R comes with a lot of functions to facilate these processes. For example you can use `summary()` to summarize a model and use `anova()` to compute analysis of variance. 
 ```{r}
-summary(fit)
-anova(fit)
+lm_summary <-summary(fit)
+lm_summary
 ```
+
+The outcome of `summary()` contains many useful insights. 
+```{r}
+lm_summary$r.squared
+lm_summary$coefficients
+names(lm_summary)
+```
+
+Another important function to introduce here is this "predict" function, which can be used to predict both confidence interval and prediction interval. 
 
 ```{r}
 new_cars <- data.frame(
@@ -43,10 +61,14 @@ new_cars <- data.frame(
   hp = c(100, 200)
 )
 
-predict(fit, new_cars)
+# Predict confidence interval
+predict(fit, new_cars, interval = "confidence")
+
+# Predict prediction interval
+predict(fit, new_cars, interval = "prediction")
 ```
 
-In fact, these functions, `summary()`, `anova()` & `predict()`, are programmed in a way that they will react differently depending on the class of the input object. Therefore, function `summary()` will provide different insights to different types of models. This type of function is  called an `S3` function/method, which is part of R's simplified [object-oriented (OO)](https://en.wikipedia.org/wiki/Object-oriented_programming) programming style. 
+However, here comes the problem. As you can imagine we have a lot of different kinds of models in R. We want to have a standardized workflow and use the same functions on different models. It means that functions like `summary()` needs to be able to react differently for different models. This is called "methods" in R. 
 
 For these types of functions, if you need to search for help, you need to search for things like `summary.lm`. That is the actual help file you should look at. The documentation of `summary` usually won't give you what you need. 
 
