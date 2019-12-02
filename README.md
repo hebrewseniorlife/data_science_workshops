@@ -6,6 +6,6 @@ This site includes materials for the Data Science with R Workshop Series hosted 
 - [Chapter 4 - Data Visualization using ggplot2 & plotly](04_data_visualization.html)
 - [Chapter 5 - Statistical Models in R](05_modeling.html)
 - [Chapter 6 - R Markdown Reports and Tables in Reports](06_rmarkdown.html)
-- Chapter 7 - Creating Interactive Web Apps using R Shiny
+- [Chapter 7 - Creating Interactive Web Apps using R Shiny](07_shiny.html)
 
 Chapter 1 & 2 are fundamentals, which you are not recommended to skip. Chapter 3-8 don't have to be read in order, although consuming them one by one is still recommended. 
